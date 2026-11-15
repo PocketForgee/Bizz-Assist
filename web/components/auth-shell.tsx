@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Wordmark } from "@/components/brand";
+import { LivelyBackdrop } from "@/components/landing-motion";
 
 export { Wordmark };
 
@@ -9,18 +10,24 @@ export { Wordmark };
  */
 export function AuthShell({ title, lead, children, width = 380 }: { title: string; lead?: string; children: ReactNode; width?: number }) {
   return (
-    <main className="grid min-h-dvh bg-pearl lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
-      <div className="flex flex-col px-6 py-8 sm:px-12">
-        <Wordmark />
-        <div className="route-in my-auto w-full py-12" style={{ maxWidth: width }}>
+    <div className="relative min-h-dvh bg-pearl">
+      {/* the landing page's living backdrop; the form sits on a solid card above it */}
+      <LivelyBackdrop />
+      <main className="relative z-10 grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+      <div className="flex flex-col px-4 py-8 sm:px-12">
+        <Wordmark className="w-fit rounded-lg bg-pearl/80 px-2 py-1 backdrop-blur-sm" />
+        <div
+          className="enter my-auto w-full rounded-2xl border border-hairline bg-canvas/90 p-6 shadow-[var(--shadow-pop)] backdrop-blur-md sm:p-8"
+          style={{ maxWidth: width + 64 }}
+        >
           <h1 className="t-display text-ink">{title}</h1>
           {lead && <p className="t-caption mt-2 text-ink-48">{lead}</p>}
           <div className="mt-8">{children}</div>
         </div>
-        <p className="t-fine text-ink-48">Support chat that learns your shop</p>
+        <p className="t-fine w-fit rounded-md bg-pearl/80 px-2 py-1 text-ink-48 backdrop-blur-sm">Support chat that learns your shop</p>
       </div>
 
-      <aside aria-hidden className="paper relative hidden overflow-hidden border-l border-hairline lg:flex lg:flex-col lg:justify-center lg:px-16">
+      <aside aria-hidden className="relative hidden overflow-hidden border-l border-hairline bg-paper/70 text-paper-ink backdrop-blur-[2px] lg:flex lg:flex-col lg:justify-center lg:px-16">
         <p className="heading-3 text-paper-ink">
           Answered once.
           <br />
@@ -47,6 +54,7 @@ export function AuthShell({ title, lead, children, width = 380 }: { title: strin
           </div>
         </div>
       </aside>
-    </main>
+      </main>
+    </div>
   );
 }
