@@ -1,11 +1,10 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-// Interface: Instrument Sans (warm, exact). Hero headlines only: Instrument Serif. Figures and meta: JetBrains Mono.
-const sans = Instrument_Sans({ variable: "--font-instrument-sans", subsets: ["latin"], display: "swap" });
-const serif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400", display: "swap" });
-const mono = JetBrains_Mono({ variable: "--font-jetbrains-mono", subsets: ["latin"], weight: ["400", "500"], display: "swap" });
+// One typeface: Geist. Geist Mono only for figures, slips and other data.
+const sans = Geist({ variable: "--font-geist", subsets: ["latin"], display: "swap" });
+const mono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"], weight: ["400", "500"], display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "BizzAssist", template: "%s · BizzAssist" },
@@ -18,7 +17,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable} h-full`}>
+    <html lang="en" className={`${sans.variable} ${mono.variable} h-full`}>
       <body className="min-h-full">{children}</body>
     </html>
   );

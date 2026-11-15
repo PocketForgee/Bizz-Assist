@@ -58,8 +58,8 @@
 
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-sheet: cubic-bezier(0.22, 1, 0.36, 1);
-  --d-press: 140ms;
-  --d-hover: 160ms;
+  --d-press: 200ms;
+  --d-hover: 240ms;
   --d-panel: 220ms;
   --d-route: 360ms;
   --d-hero: 600ms;
@@ -108,10 +108,8 @@
   --radius-lg: var(--r-lg);
   --radius-pill: var(--r-pill);
 
-  --font-sans: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-instrument-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-instrument-serif), ui-serif, Georgia, serif;
-  --font-mono: var(--font-jetbrains-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --ease-standard: var(--ease-standard);
   --ease-sheet: var(--ease-sheet);
@@ -120,6 +118,9 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    html { scroll-behavior: smooth; }
   }
 
   body {
@@ -159,7 +160,6 @@
 
 @layer components {
   /* type scale: hierarchy from size and colour; weights 400 / 500, 600 only for rare emphasis */
-  .t-hero { font-family: var(--font-serif); font-size: 68px; font-weight: 400; line-height: 1.02; letter-spacing: -0.03em; }
   .t-display { font-size: 36px; font-weight: 500; line-height: 1.12; letter-spacing: -0.02em; }
   .t-section { font-size: 26px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
   .t-lead { font-size: 18px; font-weight: 400; line-height: 1.6; color: var(--ink-80); }
@@ -171,15 +171,11 @@
   .t-mono { font-family: var(--font-mono); font-size: 12px; line-height: 1.33; font-variant-numeric: tabular-nums; }
   .t-figure { font-size: 30px; font-weight: 500; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 
-  @media (max-width: 1068px) { .t-hero { font-size: 54px; } }
   @media (max-width: 640px) {
-    .t-hero { font-size: 42px; }
     .t-display { font-size: 28px; }
     .t-section { font-size: 22px; }
     .t-figure { font-size: 26px; }
   }
-  @media (max-width: 360px) { .t-hero { font-size: 36px; } }
-  @media (min-width: 1800px) { .t-hero { font-size: 80px; } }
 
   /* press micro-interaction used by every button */
   .press {
@@ -188,7 +184,7 @@
       box-shadow var(--d-hover) var(--ease-standard);
   }
   .press:active:not(:disabled) {
-    transform: scale(0.97);
+    transform: scale(0.98);
   }
 
   /* the signature: a numbered source slip, like the stub of an order ticket */
@@ -201,7 +197,7 @@
     border-radius: 4px;
     border: 1px dashed color-mix(in srgb, currentColor 40%, transparent);
     font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 12px;
     line-height: 1;
     font-variant-numeric: tabular-nums;
     white-space: nowrap;
@@ -281,6 +277,79 @@
   }
 }
 
+/* ---- named text styles (landing page skill): one class per style, sizes only from the Tailwind scale ---- */
+@utility heading-1 { font-size: 3.75rem; line-height: 1; font-weight: 600; letter-spacing: -0.03em; text-wrap: balance; }
+@utility heading-2 { font-size: 3rem; line-height: 1; font-weight: 600; letter-spacing: -0.025em; text-wrap: balance; }
+@utility heading-3 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 600; letter-spacing: -0.02em; text-wrap: balance; }
+@utility heading-4 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 600; letter-spacing: -0.015em; text-wrap: balance; }
+@utility heading-5 { font-size: 1.5rem; line-height: 2rem; font-weight: 600; letter-spacing: -0.01em; text-wrap: balance; }
+@utility heading-6 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 600; text-wrap: balance; }
+@utility title-1 { font-size: 1.25rem; line-height: 1.75rem; font-weight: 500; }
+@utility title-2 { font-size: 1.125rem; line-height: 1.75rem; font-weight: 500; }
+@utility title-3 { font-size: 1rem; line-height: 1.5rem; font-weight: 500; }
+@utility title-4 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
+@utility title-5 { font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
+@utility body-1 { font-size: 1rem; line-height: 1.5rem; font-weight: 600; text-wrap: pretty; }
+@utility body-2 { font-size: 1rem; line-height: 1.5rem; font-weight: 500; text-wrap: pretty; }
+@utility body-3 { font-size: 1rem; line-height: 1.5rem; font-weight: 400; text-wrap: pretty; }
+@utility body-4 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; text-wrap: pretty; }
+@utility body-5 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; text-wrap: pretty; }
+@utility body-6 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; text-wrap: pretty; }
+@utility button-lg { font-size: 1.125rem; line-height: 1.75rem; font-weight: 600; }
+@utility button-md { font-size: 1rem; line-height: 1.5rem; font-weight: 600; }
+@utility button-sm { font-size: 0.875rem; line-height: 1.25rem; font-weight: 600; }
+@utility button-xsm { font-size: 0.75rem; line-height: 1rem; font-weight: 600; }
+@utility caption-1 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 500; }
+@utility caption-2 { font-size: 0.875rem; line-height: 1.25rem; font-weight: 400; }
+@utility caption-3 { font-size: 0.75rem; line-height: 1rem; font-weight: 600; }
+@utility caption-4 { font-size: 0.75rem; line-height: 1rem; font-weight: 500; }
+@utility caption-5 { font-size: 0.75rem; line-height: 1rem; font-weight: 400; }
+
+@layer components {
+  /* hero heading: the one gradient on the page, on text only, charcoal to its muted step */
+  .hero-gradient {
+    background: linear-gradient(90deg, var(--charcoal), #6b8590);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* hero entrance: each part rises 32px and fades in, one after another */
+  .enter > * { animation: rise-in 800ms var(--ease-standard) both; }
+  .enter > *:nth-child(2) { animation-delay: 80ms; }
+  .enter > *:nth-child(3) { animation-delay: 160ms; }
+  .enter > *:nth-child(4) { animation-delay: 240ms; }
+  .enter > *:nth-child(5) { animation-delay: 320ms; }
+  .enter-one { animation: route-in 500ms var(--ease-standard) both; }
+
+  /* scroll reveals: hidden only once the script is running, so the page reads fine without it */
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    transform: translateY(32px);
+    transition: opacity 700ms var(--ease-standard), transform 700ms var(--ease-standard);
+    transition-delay: calc(var(--d, 0) * 1ms);
+  }
+  .js-reveal [data-reveal].is-in { opacity: 1; transform: none; }
+
+  /* tagline: words start muted and light up one at a time; without the script they are simply shown */
+  .tag-word { transition: opacity 500ms var(--ease-standard); }
+  .js-reveal .tag-word { opacity: 0.3; }
+  .js-reveal .tag-word[data-on] { opacity: 1; }
+
+  /* questions: the answer rises in when its row opens */
+  .faq[open] .faq-a { animation: rise-in 500ms var(--ease-standard) both; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js-reveal [data-reveal] { transform: none; }
+    .js-reveal .tag-word { opacity: 1; }
+    .enter > *, .faq[open] .faq-a { animation-name: fade-in; }
+  }
+}
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(32px); }
+  to { opacity: 1; transform: none; }
+}
 @keyframes route-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }

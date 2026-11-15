@@ -21,7 +21,7 @@ export function AuthShell({ title, lead, children, width = 380 }: { title: strin
       </div>
 
       <aside aria-hidden className="paper relative hidden overflow-hidden border-l border-hairline lg:flex lg:flex-col lg:justify-center lg:px-16">
-        <p className="font-serif text-[40px] leading-[1.05] tracking-[-0.02em] text-paper-ink">
+        <p className="heading-3 text-paper-ink">
           Answered once.
           <br />
           <span className="text-paper-ink-2">Answered from then on.</span>
