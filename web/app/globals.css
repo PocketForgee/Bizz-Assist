@@ -346,6 +346,40 @@
   }
 }
 
+/* ---- landing backdrop: things rising behind the page ---- */
+@layer components {
+  /* each depth layer leans with the pointer and shifts a little with scroll; nearer layers move more */
+  .lively-layer {
+    transform: translate3d(calc(var(--mx, 0) * var(--z) * 14px), calc(var(--my, 0) * var(--z) * 10px + var(--sp, 0) * var(--z) * -60px), 0);
+    transition: transform 900ms var(--ease-standard);
+    will-change: transform;
+  }
+  /* rise from below the screen to above it, fading in and out at the edges */
+  .drift {
+    top: 100%;
+    opacity: 0;
+    animation: drift var(--dur) cubic-bezier(0.45, 0.05, 0.55, 0.95) var(--delay) infinite;
+    will-change: transform, opacity;
+  }
+  .sway { animation: sway var(--sw) cubic-bezier(0.45, 0, 0.55, 1) infinite alternate; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .drift { animation: none !important; top: var(--y); opacity: var(--o); }
+    .sway { animation: none !important; }
+    .lively-layer { transform: none; }
+  }
+}
+@keyframes drift {
+  0% { transform: translate3d(0, 6vh, 0); opacity: 0; }
+  12% { opacity: var(--o); }
+  85% { opacity: var(--o); }
+  100% { transform: translate3d(0, -118vh, 0); opacity: 0; }
+}
+@keyframes sway {
+  from { transform: translate3d(-10px, 0, 0) rotate(-3deg); }
+  to { transform: translate3d(10px, 0, 0) rotate(3deg); }
+}
+
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(32px); }
   to { opacity: 1; transform: none; }

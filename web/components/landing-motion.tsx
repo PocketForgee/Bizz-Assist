@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { Wordmark } from "@/components/brand";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { Mark, Wordmark } from "@/components/brand";
 import { cn } from "@/components/ui";
 
 /* Motion for the landing page: the floating nav, scroll reveals and the tagline that lights up word by word.
@@ -204,5 +204,140 @@ export function TaglineReveal({ lines, className }: { lines: string[]; className
         </span>
       ))}
     </p>
+  );
+}
+
+/* ---- the living backdrop ----
+   What a support desk sees all day, drifting up behind the page: the same question in every language the team
+   reads, the source slips answers carry, ticket stubs and the palette's dots. Flat colours, transform and opacity
+   only, three depth layers that lean with the pointer and the scroll. Positions are fixed data, so server and
+   client render the same thing. */
+
+type Drift = {
+  k: "q" | "slip" | "mark" | "dot";
+  text?: string;
+  tone: "paper" | "saffron" | "teal" | "sand" | "sienna";
+  x: number; // left, % of the screen
+  y: number; // resting top for reduced motion, %
+  dur: number; // seconds to rise through the screen
+  delay: number; // negative: already on its way at load
+  z: 1 | 2 | 3; // depth layer: 1 far, 3 near
+  size?: number;
+  wide?: boolean; // only on screens md and up
+};
+
+const DRIFT: Drift[] = [
+  { k: "q", text: "Where is my order?", tone: "paper", x: 4, y: 18, dur: 34, delay: -4, z: 2 },
+  { k: "q", text: "¿Dónde está mi pedido?", tone: "saffron", x: 72, y: 12, dur: 38, delay: -22, z: 3 },
+  { k: "q", text: "मेरा ऑर्डर कहाँ है?", tone: "paper", x: 84, y: 58, dur: 30, delay: -9, z: 2 },
+  { k: "q", text: "Où est ma commande ?", tone: "teal", x: 10, y: 70, dur: 42, delay: -30, z: 1, wide: true },
+  { k: "q", text: "أين طلبي؟", tone: "paper", x: 58, y: 84, dur: 36, delay: -15, z: 1, wide: true },
+  { k: "q", text: "Wo ist meine Bestellung?", tone: "sand", x: 30, y: 40, dur: 46, delay: -36, z: 1, wide: true },
+  { k: "q", text: "Cadê meu pedido?", tone: "paper", x: 88, y: 30, dur: 33, delay: -27, z: 3, wide: true },
+  { k: "q", text: "Di mana pesanan saya?", tone: "paper", x: 44, y: 8, dur: 40, delay: -6, z: 2, wide: true },
+  { k: "slip", text: "S1 Shipping policy", tone: "teal", x: 20, y: 30, dur: 31, delay: -18, z: 2 },
+  { k: "slip", text: "S2 Order lookup", tone: "paper", x: 66, y: 46, dur: 37, delay: -2, z: 1, wide: true },
+  { k: "slip", text: "Q&A 08 · Learned", tone: "saffron", x: 6, y: 92, dur: 29, delay: -12, z: 3, wide: true },
+  { k: "slip", text: "Translated · ES", tone: "paper", x: 78, y: 76, dur: 35, delay: -31, z: 2 },
+  { k: "slip", text: "Handed to Priya", tone: "sienna", x: 50, y: 62, dur: 44, delay: -40, z: 1, wide: true },
+  { k: "mark", tone: "teal", x: 92, y: 8, dur: 27, delay: -8, z: 3, size: 28 },
+  { k: "mark", tone: "saffron", x: 2, y: 48, dur: 32, delay: -20, z: 2, size: 22 },
+  { k: "mark", tone: "sienna", x: 38, y: 88, dur: 39, delay: -33, z: 1, size: 18, wide: true },
+  { k: "mark", tone: "sand", x: 62, y: 22, dur: 41, delay: -14, z: 1, size: 16, wide: true },
+  { k: "dot", tone: "saffron", x: 16, y: 10, dur: 24, delay: -3, z: 3, size: 14 },
+  { k: "dot", tone: "teal", x: 54, y: 36, dur: 28, delay: -19, z: 2, size: 10 },
+  { k: "dot", tone: "sienna", x: 96, y: 66, dur: 26, delay: -11, z: 3, size: 12 },
+  { k: "dot", tone: "sand", x: 26, y: 78, dur: 30, delay: -25, z: 2, size: 18, wide: true },
+  { k: "dot", tone: "teal", x: 74, y: 94, dur: 34, delay: -7, z: 1, size: 8, wide: true },
+  { k: "dot", tone: "saffron", x: 46, y: 52, dur: 36, delay: -29, z: 1, size: 22, wide: true },
+  { k: "dot", tone: "sienna", x: 34, y: 16, dur: 25, delay: -16, z: 2, size: 6 },
+];
+
+const BUBBLE: Record<Drift["tone"], string> = {
+  paper: "border border-paper-ink/10 bg-white text-paper-ink-2",
+  saffron: "bg-saffron text-paper-ink",
+  teal: "bg-teal text-white",
+  sand: "bg-sand text-paper-ink",
+  sienna: "bg-sienna text-white",
+};
+const SOLID: Record<Drift["tone"], string> = {
+  paper: "text-paper-ink/20 bg-paper-ink/20",
+  saffron: "text-saffron bg-saffron",
+  teal: "text-teal bg-teal",
+  sand: "text-sand bg-sand",
+  sienna: "text-sienna bg-sienna",
+};
+// nearer layers are stronger, so depth reads at a glance
+const OPACITY = { 1: 0.3, 2: 0.45, 3: 0.6 } as const;
+
+export function LivelyBackdrop() {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let frame = 0;
+    let mx = 0;
+    let my = 0;
+    const paint = () => {
+      frame = 0;
+      const max = document.documentElement.scrollHeight - innerHeight;
+      el.style.setProperty("--sp", String(max > 0 ? scrollY / max : 0));
+      el.style.setProperty("--mx", mx.toFixed(3));
+      el.style.setProperty("--my", my.toFixed(3));
+    };
+    const ask = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
+    };
+    const onMove = (e: PointerEvent) => {
+      mx = e.clientX / innerWidth - 0.5;
+      my = e.clientY / innerHeight - 0.5;
+      ask();
+    };
+    const fine = matchMedia("(pointer: fine)").matches;
+    if (fine) addEventListener("pointermove", onMove, { passive: true });
+    addEventListener("scroll", ask, { passive: true });
+    paint();
+    return () => {
+      if (fine) removeEventListener("pointermove", onMove);
+      removeEventListener("scroll", ask);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <div ref={ref} aria-hidden className="pointer-events-none fixed inset-0 z-0 overflow-hidden print:hidden">
+      {([1, 2, 3] as const).map((z) => (
+        <div key={z} className="lively-layer absolute inset-0" style={{ "--z": z } as CSSProperties}>
+          {DRIFT.filter((d) => d.z === z).map((d, n) => (
+            <div
+              key={n}
+              className={cn("drift absolute", d.wide && "max-md:hidden")}
+              style={
+                {
+                  left: `${d.x}%`,
+                  "--y": `${d.y}%`,
+                  "--o": OPACITY[z],
+                  "--dur": `${d.dur}s`,
+                  "--delay": `${d.delay}s`,
+                  "--sw": `${6 + (n % 4) * 1.5}s`,
+                } as CSSProperties
+              }
+            >
+              <div className="sway">
+                {d.k === "q" && (
+                  <span className={cn("caption-4 block rounded-2xl rounded-bl-sm px-3 py-2 whitespace-nowrap shadow-[0_8px_20px_-12px_rgb(38_70_83/0.35)]", BUBBLE[d.tone], z === 3 && "body-6")}>
+                    {d.text}
+                  </span>
+                )}
+                {d.k === "slip" && <span className={cn("slip bg-white/60", d.tone === "paper" ? "text-paper-ink-2" : SOLID[d.tone].split(" ")[0])}>{d.text}</span>}
+                {d.k === "mark" && <Mark size={d.size} className={SOLID[d.tone].split(" ")[0]} />}
+                {d.k === "dot" && <span className={cn("block rounded-full", SOLID[d.tone].split(" ")[1])} style={{ width: d.size, height: d.size }} />}
+              </div>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }

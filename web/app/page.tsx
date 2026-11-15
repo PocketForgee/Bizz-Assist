@@ -5,7 +5,7 @@ import { ArrowRightIcon, ArrowUpRightIcon, PackageIcon, PlusIcon, SealCheckIcon,
 import { PLAN_LABEL, PLAN_LIMITS, type Plan } from "@/lib/plans";
 import { Mark } from "@/components/brand";
 import { HeroChat, InboxFragment, LoopSlider, PhoneFragment, SourcesFragment } from "@/components/landing";
-import { LandingNav, RevealRoot, TaglineReveal } from "@/components/landing-motion";
+import { LandingNav, LivelyBackdrop, RevealRoot, TaglineReveal } from "@/components/landing-motion";
 
 const TITLE = "BizzAssist: support chat that learns your shop";
 const DESCRIPTION =
@@ -95,6 +95,7 @@ export default function Home() {
       </a>
       <LandingNav />
       <RevealRoot />
+      <LivelyBackdrop />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -106,7 +107,7 @@ export default function Home() {
         }}
       />
 
-      <main id="main">
+      <main id="main" className="relative z-10">
         {/* ---------- hero: the claim, and the product doing it ---------- */}
         <section className="mx-auto grid max-w-[1240px] items-center gap-16 px-6 pt-24 pb-24 md:px-10 lg:min-h-svh lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:pt-24 lg:pb-16">
           <div className="enter">
@@ -377,7 +378,7 @@ export default function Home() {
         </section>
       </main>
 
-      <footer className="bg-paper-ink text-paper">
+      <footer className="relative z-10 bg-paper-ink text-paper">
         <div className="caption-2 mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-t border-paper/10 px-6 py-8 text-paper/60 md:px-10">
           <span className="title-4 flex items-center gap-2 text-paper">
             <Mark size={18} className="text-paper [--mark-cut:var(--paper-ink)]" />
