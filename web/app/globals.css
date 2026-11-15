@@ -22,6 +22,9 @@
   --danger: #d70015;
   --success: #248a3d;
   --warning: #b25000;
+  /* status text on dark tiles (code / test result blocks) */
+  --success-on-dark: #30d158;
+  --danger-on-dark: #ff6961;
 
   --r-sm: 8px;
   --r-md: 11px;
@@ -62,6 +65,8 @@
   --color-danger: var(--danger);
   --color-success: var(--success);
   --color-warning: var(--warning);
+  --color-success-on-dark: var(--success-on-dark);
+  --color-danger-on-dark: var(--danger-on-dark);
   --color-accent: var(--accent);
 
   --radius-sm: var(--r-sm);

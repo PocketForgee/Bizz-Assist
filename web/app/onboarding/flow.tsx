@@ -1,8 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
-import { Check } from "lucide-react";
+import { useEffect, useState, type FormEvent } from "react";
+import { Check, Globe, Loader2 } from "lucide-react";
 import { api } from "@/lib/client";
 import { Button, Field, Input, cn } from "@/components/ui";
 import { Wordmark } from "@/components/auth-shell";
@@ -28,6 +28,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ field?: string; message: string } | null>(null);
   const [widgetId, setWidgetId] = useState<string | null>(null);
+  const [crawling, setCrawling] = useState(false);
   const [form, setForm] = useState({
     category: "",
     defaultLang: "en",
@@ -43,7 +44,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
     e.preventDefault();
     setBusy(true);
     setError(null);
-    const res = await api<{ widgetId: string }>("/api/onboarding", {
+    const res = await api<{ widgetId: string; crawling: boolean }>("/api/onboarding", {
       body: {
         category: form.category,
         defaultLang: form.defaultLang,
@@ -59,6 +60,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
       return;
     }
     setWidgetId(res.data.widgetId);
+    setCrawling(res.data.crawling);
     setStep(2);
   }
 
@@ -158,7 +160,10 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
                 <Check aria-hidden size={24} />
               </span>
               <h1 className="t-tagline">Your chat is ready</h1>
-              <p className="t-caption text-ink-48">Add a few Q&amp;A answers so the bot has something to say, then put the chat on your site.</p>
+              <p className="t-caption text-ink-48">
+                {crawling ? "We're reading your website so the bot can answer from it. Add Q&A for anything it's missing." : "Add a few Q&A answers so the bot has something to say, then put the chat on your site."}
+              </p>
+              {crawling && <CrawlList />}
               <Button className="w-full" onClick={() => router.replace(widgetId ? `/app/widgets/${widgetId}?tab=install` : "/app")}>
                 Get the install code
               </Button>
@@ -170,5 +175,51 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
         </div>
       </div>
     </main>
+  );
+}
+
+type Page = { id: string; title: string; url: string | null; status: string };
+
+/** Live list of auto-crawled pages: polls for ~90 s while the background crawl runs. */
+function CrawlList() {
+  const [pages, setPages] = useState<Page[]>([]);
+  const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    let stop = false;
+    const started = Date.now();
+    async function tick() {
+      const res = await api<{ items: Page[] }>("/api/knowledge?source=web");
+      if (stop) return;
+      if (res.ok) setPages(res.data.items);
+      if (Date.now() - started > 90_000) setDone(true);
+      else setTimeout(tick, 2000);
+    }
+    void tick();
+    return () => {
+      stop = true;
+    };
+  }, []);
+
+  return (
+    <ul className="w-full divide-y divide-divider rounded-md border border-hairline text-left" aria-live="polite">
+      {pages.map((p) => (
+        <li key={p.id} className="row-in flex items-center gap-3 px-3 py-2">
+          <Globe size={16} className="shrink-0 text-ink-48" aria-hidden />
+          <span className="t-caption min-w-0 flex-1 truncate">{p.title || p.url}</span>
+          <Check size={16} className="shrink-0 text-success" aria-label="Read" />
+        </li>
+      ))}
+      <li className="t-caption flex items-center gap-3 px-3 py-2 text-ink-48">
+        {done ? (
+          <span>{pages.length ? `${pages.length} pages ready.` : "We couldn't read pages from that site. Add them under Train › Website."}</span>
+        ) : (
+          <>
+            <Loader2 size={16} className="shrink-0 animate-spin" aria-hidden />
+            <span>{pages.length ? `${pages.length} pages read, looking for more…` : "Reading your homepage and policy pages…"}</span>
+          </>
+        )}
+      </li>
+    </ul>
   );
 }

@@ -15,6 +15,9 @@ export default async function WidgetEditorPage({ params, searchParams }: { param
   if (!isUuid(id)) notFound();
   const [widget] = await sql<Widget[]>`select * from widgets where id = ${id} and business_id = ${user.business_id}`;
   if (!widget) notFound();
+  const actions = await sql<{ id: string; name: string; description: string }[]>`
+    select id, name, description from api_actions where business_id = ${user.business_id} order by created_at
+  `;
 
   return (
     <WidgetEditor
@@ -22,6 +25,7 @@ export default async function WidgetEditorPage({ params, searchParams }: { param
       businessName={user.business_name}
       appUrl={(process.env.APP_URL ?? "").replace(/\/$/, "")}
       initialTab={tab === "install" || tab === "behaviour" ? tab : "appearance"}
+      actions={[...actions]}
     />
   );
 }

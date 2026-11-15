@@ -20,6 +20,7 @@ type Draft = {
   persona: string;
   allowed_domains: string;
   escalation_keywords: string;
+  enabled_action_ids: string[];
 };
 
 const toDraft = (w: Widget): Draft => ({
@@ -32,9 +33,22 @@ const toDraft = (w: Widget): Draft => ({
   persona: w.persona,
   allowed_domains: w.allowed_domains.join("\n"),
   escalation_keywords: w.escalation_keywords.join(", "),
+  enabled_action_ids: w.enabled_action_ids,
 });
 
-export function WidgetEditor({ initial, businessName, appUrl, initialTab }: { initial: Widget; businessName: string; appUrl: string; initialTab: Tab }) {
+export function WidgetEditor({
+  initial,
+  businessName,
+  appUrl,
+  initialTab,
+  actions,
+}: {
+  initial: Widget;
+  businessName: string;
+  appUrl: string;
+  initialTab: Tab;
+  actions: { id: string; name: string; description: string }[];
+}) {
   const router = useRouter();
   const [tab, setTab] = useState<Tab>(initialTab);
   const [saved, setSaved] = useState<Draft>(() => toDraft(initial));
@@ -62,7 +76,7 @@ export function WidgetEditor({ initial, businessName, appUrl, initialTab }: { in
     setBusy(false);
     if (!res.ok) {
       setError({ field: res.field, message: res.error });
-      if (res.field === "allowed_domains" || res.field === "escalation_keywords" || res.field === "persona") setTab("behaviour");
+      if (res.field === "allowed_domains" || res.field === "escalation_keywords" || res.field === "persona" || res.field === "enabled_action_ids") setTab("behaviour");
       else if (res.field) setTab("appearance");
       return;
     }
@@ -162,6 +176,39 @@ export function WidgetEditor({ initial, businessName, appUrl, initialTab }: { in
               <Field label="Hand over to a person when the customer says" hint="Comma separated. Matched as whole words." error={err("escalation_keywords")}>
                 {(a) => <Input {...a} value={draft.escalation_keywords} onChange={(e) => set("escalation_keywords")(e.target.value)} />}
               </Field>
+              <fieldset className="flex flex-col gap-2">
+                <legend className="t-caption-strong mb-1">Live lookups this bot may use</legend>
+                {actions.length === 0 ? (
+                  <p className="t-caption text-ink-48">
+                    No API actions yet.{" "}
+                    <a href="/app/train?tab=actions" className="text-primary hover:underline">
+                      Add one under Train
+                    </a>
+                    .
+                  </p>
+                ) : (
+                  actions.map((a) => {
+                    const on = draft.enabled_action_ids.includes(a.id);
+                    return (
+                      <label key={a.id} className="flex min-h-11 cursor-pointer items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={on}
+                          onChange={() =>
+                            setDraft((d) => ({ ...d, enabled_action_ids: on ? d.enabled_action_ids.filter((x) => x !== a.id) : [...d.enabled_action_ids, a.id] }))
+                          }
+                          className="mt-1 size-4 accent-[var(--primary)]"
+                        />
+                        <span>
+                          <span className="t-caption-strong block">{a.name}</span>
+                          <span className="t-fine block text-ink-48">{a.description}</span>
+                        </span>
+                      </label>
+                    );
+                  })
+                )}
+                {err("enabled_action_ids") && <p className="t-caption text-danger">{err("enabled_action_ids")}</p>}
+              </fieldset>
               <Field label="Allowed websites" hint="One domain per line, e.g. shop.example.com or *.example.com. Leave empty to allow any site." error={err("allowed_domains")}>
                 {(a) => <Textarea {...a} value={draft.allowed_domains} onChange={(e) => set("allowed_domains")(e.target.value)} className="font-mono text-[15px]" />}
               </Field>
