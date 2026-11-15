@@ -1,0 +1,64 @@
+import { ApiError, GoogleGenAI, type Content, type FunctionCall, type FunctionDeclaration } from "@google/genai";
+
+export const MODEL_MAIN = () => process.env.LLM_MODEL_MAIN || "";
+export const MODEL_LITE = () => process.env.LLM_MODEL_LITE || "";
+
+let client: GoogleGenAI | null = null;
+function ai(): GoogleGenAI | null {
+  const apiKey = process.env.LLM_API_KEY;
+  if (!apiKey) return null;
+  client ??= new GoogleGenAI({ apiKey });
+  return client;
+}
+
+export type LLMOk = { ok: true; text: string; functionCalls: FunctionCall[]; modelContent: Content | null };
+export type LLMFail = { ok: false; reason: "not_configured" | "rate_limited" | "error"; detail?: string };
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * One model call. On 429 it waits and retries once; any other failure (or a second 429)
+ * comes back as { ok: false } so the caller can hand the chat to a human.
+ */
+export async function askLLM(opts: {
+  model: string;
+  system: string;
+  contents: Content[];
+  tools?: FunctionDeclaration[];
+  temperature?: number;
+  json?: { schema: unknown };
+}): Promise<LLMOk | LLMFail> {
+  const genai = ai();
+  if (!genai) return { ok: false, reason: "not_configured", detail: "LLM_API_KEY is not set" };
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await genai.models.generateContent({
+        model: opts.model,
+        contents: opts.contents,
+        config: {
+          systemInstruction: opts.system,
+          temperature: opts.temperature ?? 0.2,
+          abortSignal: AbortSignal.timeout(30_000),
+          ...(opts.tools?.length ? { tools: [{ functionDeclarations: opts.tools }] } : {}),
+          ...(opts.json ? { responseMimeType: "application/json", responseJsonSchema: opts.json.schema } : {}),
+        },
+      });
+      return {
+        ok: true,
+        text: (res.text ?? "").trim(),
+        functionCalls: res.functionCalls ?? [],
+        modelContent: res.candidates?.[0]?.content ?? null,
+      };
+    } catch (err) {
+      const status = err instanceof ApiError ? err.status : 0;
+      if (status === 429 && attempt === 0) {
+        await sleep(1500 + Math.random() * 1000);
+        continue;
+      }
+      console.error("[llm] call failed", status, err instanceof Error ? err.message : err);
+      return { ok: false, reason: status === 429 ? "rate_limited" : "error", detail: err instanceof Error ? err.message : String(err) };
+    }
+  }
+  return { ok: false, reason: "rate_limited" };
+}
