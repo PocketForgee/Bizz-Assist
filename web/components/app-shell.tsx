@@ -5,17 +5,33 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { BarChart3, CreditCard, FlaskConical, GraduationCap, Home, Inbox, LayoutGrid, LogOut, Menu, Users, X } from "lucide-react";
 import { cn } from "@/components/ui";
+import { Wordmark } from "@/components/brand";
 import { api } from "@/lib/client";
 
-const NAV = [
-  { href: "/app", label: "Home", icon: Home, owner: true },
-  { href: "/app/widgets", label: "Widgets", icon: LayoutGrid, owner: true },
-  { href: "/app/train", label: "Train", icon: GraduationCap, owner: true },
-  { href: "/app/playground", label: "Playground", icon: FlaskConical, owner: true },
-  { href: "/app/inbox", label: "Inbox", icon: Inbox, owner: false },
-  { href: "/app/team", label: "Team", icon: Users, owner: true },
-  { href: "/app/analytics", label: "Analytics", icon: BarChart3, owner: true },
-  { href: "/app/plan", label: "Plan", icon: CreditCard, owner: true },
+const GROUPS = [
+  {
+    label: null,
+    items: [
+      { href: "/app", label: "Home", icon: Home, owner: true },
+      { href: "/app/inbox", label: "Inbox", icon: Inbox, owner: false },
+    ],
+  },
+  {
+    label: "Teach the assistant",
+    items: [
+      { href: "/app/train", label: "Train", icon: GraduationCap, owner: true },
+      { href: "/app/playground", label: "Playground", icon: FlaskConical, owner: true },
+      { href: "/app/widgets", label: "Widgets", icon: LayoutGrid, owner: true },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { href: "/app/analytics", label: "Analytics", icon: BarChart3, owner: true },
+      { href: "/app/team", label: "Team", icon: Users, owner: true },
+      { href: "/app/plan", label: "Plan", icon: CreditCard, owner: true },
+    ],
+  },
 ] as const;
 
 export function AppShell({
@@ -34,7 +50,6 @@ export function AppShell({
   const [open, setOpen] = useState(false);
   useEffect(() => setOpen(false), [pathname]);
 
-  const items = NAV.filter((n) => user.role === "owner" || !n.owner);
   const isActive = (href: string) => (href === "/app" ? pathname === "/app" : pathname.startsWith(href));
 
   async function logout() {
@@ -43,59 +58,101 @@ export function AppShell({
     router.refresh();
   }
 
-  const nav = (
-    <nav aria-label="Main" className="flex flex-col gap-0.5 p-3">
-      {items.map(({ href, label, icon: Icon }) => (
-        <Link
-          key={href}
-          href={href}
-          aria-current={isActive(href) ? "page" : undefined}
-          className={cn(
-            "press flex h-9 items-center gap-3 rounded-pill px-3 t-caption",
-            isActive(href) ? "bg-parchment font-semibold text-ink" : "text-ink-80 hover:bg-parchment/60",
-          )}
-        >
-          <Icon aria-hidden size={20} strokeWidth={1.75} />
-          <span className="flex-1">{label}</span>
-          {badges[href] ? <span className="rounded-pill bg-primary px-1.5 t-fine font-semibold text-white">{badges[href]}</span> : null}
-        </Link>
-      ))}
-    </nav>
+  const sidebar = (
+    <div className="flex h-full flex-col">
+      <div className="flex h-16 items-center px-5">
+        <Wordmark href="/app" />
+      </div>
+      <div className="mx-3 mb-2 rounded-md border border-hairline bg-canvas px-3 py-2.5">
+        <p className="truncate text-[14px] font-medium text-ink">{user.business_name}</p>
+        <p className="t-fine mt-0.5 text-ink-48">{user.role === "owner" ? "Owner" : "Agent"}</p>
+      </div>
+      <nav aria-label="Main" className="flex-1 overflow-y-auto px-3 pb-4">
+        {GROUPS.map((g, gi) => {
+          const items = g.items.filter((n) => user.role === "owner" || !n.owner);
+          if (!items.length) return null;
+          return (
+            <div key={gi} className={cn(gi > 0 && "mt-6")}>
+              {g.label && <p className="t-fine mb-2 px-3 text-ink-48">{g.label}</p>}
+              <ul className="flex flex-col gap-0.5">
+                {items.map(({ href, label, icon: Icon }) => {
+                  const active = isActive(href);
+                  return (
+                    <li key={href}>
+                      <Link
+                        href={href}
+                        aria-current={active ? "page" : undefined}
+                        className={cn(
+                          "press flex h-9 items-center gap-2.5 rounded-md px-3 text-[14px]",
+                          active
+                            ? "bg-canvas font-medium text-ink shadow-[0_1px_2px_rgb(0_0_0/0.06),0_0_0_1px_rgb(0_0_0/0.05)]"
+                            : "text-ink-80 hover:bg-[rgb(23_23_23/0.04)] hover:text-ink",
+                        )}
+                      >
+                        <Icon aria-hidden size={16} strokeWidth={1.5} className={active ? "text-primary" : "text-ink-48"} />
+                        <span className="flex-1">{label}</span>
+                        {badges[href] ? (
+                          <span className={cn("t-mono rounded-[5px] px-1.5 py-0.5", href === "/app/inbox" ? "bg-primary text-white" : "bg-parchment text-ink-80")}>
+                            {badges[href]}
+                          </span>
+                        ) : null}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
+      </nav>
+      <div className="border-t border-hairline p-3">
+        <div className="flex items-center gap-2.5 px-2 py-1.5">
+          <span aria-hidden className="flex size-8 shrink-0 items-center justify-center rounded-full bg-ink text-[12px] font-medium text-white">
+            {user.name.trim().charAt(0).toUpperCase() || "?"}
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block truncate text-[14px] font-medium text-ink">{user.name}</span>
+            {user.role === "owner" ? (
+              <Link href="/app/plan" className="t-fine text-ink-48 hover:text-ink">
+                {planLabel} plan
+              </Link>
+            ) : (
+              <span className="t-fine text-ink-48">Agent</span>
+            )}
+          </span>
+          <button type="button" onClick={logout} aria-label="Sign out" title="Sign out" className="press flex size-9 items-center justify-center rounded-md text-ink-48 hover:bg-parchment hover:text-ink">
+            <LogOut size={16} strokeWidth={1.5} aria-hidden />
+          </button>
+        </div>
+      </div>
+    </div>
   );
 
   return (
-    <div className="flex min-h-dvh flex-col">
-      <header className="sticky top-0 z-30 flex h-11 items-center gap-3 bg-black px-4 text-white">
-        <button type="button" className="press -ml-2 flex size-11 items-center justify-center min-[834px]:hidden" aria-label={open ? "Close menu" : "Open menu"} aria-expanded={open} onClick={() => setOpen((o) => !o)}>
-          {open ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
-        </button>
-        <Link href="/app" className="text-[15px] font-semibold tracking-tight">
-          BizzAssist
-        </Link>
-        <span className="hidden truncate text-[12px] text-white/60 sm:inline">{user.business_name}</span>
-        <div className="ml-auto flex items-center gap-4 text-[12px]">
-          <Link href="/app/plan" className="rounded-pill border border-white/30 px-2 py-0.5 hover:border-white">
-            {planLabel}
-          </Link>
-          <span className="hidden text-white/80 sm:inline">{user.name}</span>
-          <button type="button" onClick={logout} className="press flex min-h-11 items-center gap-1 text-white/80 hover:text-white">
-            <LogOut size={14} aria-hidden /> Sign out
-          </button>
-        </div>
-      </header>
+    <div className="flex min-h-dvh bg-pearl">
+      <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 border-r border-hairline bg-[#f4f4f5] min-[900px]:block">{sidebar}</aside>
 
-      <div className="flex flex-1">
-        <aside className="hidden w-[232px] shrink-0 border-r border-hairline bg-canvas min-[834px]:block">
-          <div className="sticky top-11">{nav}</div>
-        </aside>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-hairline bg-pearl px-3 min-[900px]:hidden">
+          <button
+            type="button"
+            className="press flex size-10 items-center justify-center rounded-md hover:bg-parchment"
+            aria-label={open ? "Close menu" : "Open menu"}
+            aria-expanded={open}
+            onClick={() => setOpen((o) => !o)}
+          >
+            {open ? <X size={18} aria-hidden /> : <Menu size={18} aria-hidden />}
+          </button>
+          <Wordmark href="/app" />
+        </header>
         {open && (
-          <div className="fixed inset-0 top-11 z-20 min-[834px]:hidden">
-            <button type="button" aria-label="Close menu" className="absolute inset-0 bg-black/30" onClick={() => setOpen(false)} />
-            <aside className="route-in relative h-full w-[260px] bg-canvas shadow-[var(--shadow-pop)]">{nav}</aside>
+          <div className="fixed inset-0 z-40 min-[900px]:hidden">
+            <button type="button" aria-label="Close menu" className="fade-in absolute inset-0 bg-[rgb(15_15_16/0.28)]" onClick={() => setOpen(false)} />
+            <aside className="sheet-in relative h-full w-[280px] border-r border-hairline bg-[#f4f4f5] shadow-[var(--shadow-pop)] [animation-name:route-in]">{sidebar}</aside>
           </div>
         )}
-        <main key={pathname} className="route-in min-w-0 flex-1 bg-parchment px-6 pb-16 lg:px-8">
-          <div className="mx-auto max-w-[1200px]">{children}</div>
+        <main key={pathname} className="route-in min-w-0 flex-1 px-6 pb-20 lg:px-10">
+          <div className="mx-auto max-w-[1360px]">{children}</div>
         </main>
       </div>
     </div>

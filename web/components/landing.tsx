@@ -1,274 +1,281 @@
 "use client";
 
-// Interactive parts of the marketing page (/). Every fragment marked data-ui is the real product's UI, drawn in HTML.
 import { useState, type CSSProperties, type ReactNode } from "react";
+import { Check, FileText, Globe, Languages, MessageSquareText, Sheet as SheetIcon, Sparkles } from "lucide-react";
+import { Mark } from "@/components/brand";
 import { cn } from "@/components/ui";
 
-/* ---------- shared bits ---------- */
+/* Product fragments for the landing page. Each is a piece of the real app with plausible data, drawn in HTML. */
 
-/** The source chip every bot answer carries: the page's one motif. */
-export function SourceChip({ n, label, dark }: { n: number; label: string; dark?: boolean }) {
-  return (
-    <span className={cn("inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[13px]", dark ? "bg-white/15 text-white" : "bg-primary/10 text-primary")}>
-      <span className="font-semibold">S{n}</span> {label}
-    </span>
-  );
+const t = (ms: number) => ({ "--t": ms }) as CSSProperties;
+
+function Slip({ children, className }: { children: ReactNode; className?: string }) {
+  return <span className={cn("slip", className)}>{children}</span>;
 }
 
-function Bubble({ who, children }: { who: "buyer" | "bot" | "agent"; children: ReactNode }) {
+/** Hero: the shop's chat widget, playing one conversation that shows the whole product. */
+export function HeroChat() {
   return (
-    <div className={cn("flex", who === "buyer" ? "justify-end" : "justify-start")}>
-      <div
-        className={cn(
-          "max-w-[80%] rounded-[18px] px-3.5 py-2 text-[15px] leading-snug",
-          who === "buyer" ? "rounded-br-md bg-primary text-white" : who === "agent" ? "rounded-bl-md bg-ink text-white" : "rounded-bl-md bg-parchment text-ink",
-        )}
-      >
-        {children}
+    <div className="relative mx-auto w-full max-w-[460px]">
+      <div className="overflow-hidden rounded-[22px] border border-paper-ink/10 bg-white shadow-[var(--shadow-product)]">
+        <div className="flex h-16 items-center gap-3 border-b border-black/[0.06] px-4">
+          <span className="relative flex size-10 items-center justify-center rounded-full bg-[#7a4b2a] text-[15px] font-medium text-white">
+            L<span className="absolute -right-0.5 -bottom-0.5 size-3 rounded-full border-2 border-white bg-success" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] font-medium text-ink">Lumen &amp; Loom</p>
+            <p className="t-fine text-ink-48">Usually answers in seconds</p>
+          </div>
+        </div>
+        <div className="play flex flex-col gap-1 bg-pearl px-4 py-5 text-[14px] leading-[1.45]">
+          <p style={t(300)} className="max-w-[80%] self-end rounded-[16px] rounded-tr-[4px] bg-[#7a4b2a] px-3.5 py-2 text-white">
+            Where is my order LL-1002? It&apos;s arjun@example.com
+          </p>
+          <div style={t(1100)} className="mt-3 flex max-w-[86%] flex-col items-start gap-1.5 self-start">
+            <p className="rounded-[16px] rounded-tl-[4px] border border-black/[0.07] bg-white px-3.5 py-2 text-ink">
+              It shipped on 12 Nov with DHL, tracking 7731 0042 85. It should reach you on 18 Nov.
+            </p>
+            <span className="flex gap-1.5 text-ink-48">
+              <Slip>S1 Order lookup</Slip>
+              <Slip>S2 Shipping policy</Slip>
+            </span>
+          </div>
+          <p style={t(2300)} className="mt-3 max-w-[80%] self-end rounded-[16px] rounded-tr-[4px] bg-[#7a4b2a] px-3.5 py-2 text-white">
+            Can I return a cushion cover I&apos;ve used?
+          </p>
+          <div style={t(3200)} className="my-3 flex items-center gap-2 self-center text-[12px] text-ink-48">
+            <span className="h-px w-6 bg-black/10" />
+            Priya from the team joined
+            <span className="h-px w-6 bg-black/10" />
+          </div>
+          <div style={t(4000)} className="flex max-w-[86%] flex-col items-start self-start">
+            <span className="t-fine mb-1 px-1 text-ink-48">Support team</span>
+            <p className="rounded-[16px] rounded-tl-[4px] bg-ink px-3.5 py-2 text-white">Yes, within 30 days if it&apos;s faulty. Send a photo and we&apos;ll sort it.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* the learned slip: the moment the page is about */}
+      <div style={t(5200)} className="play absolute -bottom-10 -left-4 w-[260px] sm:-left-16">
+        <div className="rotate-[-2deg] rounded-[12px] border border-dashed border-paper-ink/30 bg-paper p-3.5 shadow-[0_12px_24px_-12px_rgb(31_27_22/0.35)]">
+          <div className="flex items-center justify-between text-[12px] text-paper-ink-2">
+            <span>Learned from Priya</span>
+            <Slip className="text-primary">Q&amp;A 08</Slip>
+          </div>
+          <p className="mt-1.5 text-[13px] leading-snug text-paper-ink">Used items can be returned within 30 days when faulty, with a photo.</p>
+        </div>
       </div>
     </div>
   );
 }
-
-/* ---------- features: five training sources as switches ---------- */
 
 const SOURCES = [
-  { line: "Reads your website and sitemap", more: "Up to 300 pages on Pro. One click re-reads a page after you change it.", on: "#0058b0" },
-  { line: "Learns from PDFs and pasted text", more: "Only the text is kept. The file itself is never stored.", on: "#1e7a35" },
-  { line: "Uses your exact Q&A answers first", more: "Add the other ways customers ask, and it matches those too.", on: "#8a5a00" },
-  { line: "Looks up live orders for you", more: "From your API or a Google Sheet, only with the order ID and the buyer's email or phone.", on: "#3a3a3c" },
-  { line: "Turns agent replies into answers", more: "You approve each one before the bot uses it.", on: "#0058b0" },
+  { icon: Globe, name: "Website", note: "Your pages or sitemap. The homepage and policy pages are read when you sign up.", status: "42 pages" },
+  { icon: FileText, name: "Documents", note: "PDFs, text files or pasted text, like a returns policy or a size guide.", status: "3 files" },
+  { icon: MessageSquareText, name: "Q&A", note: "Exact answers, with other ways customers ask the same thing.", status: "18 answers" },
+  { icon: SheetIcon, name: "Order lookups", note: "A REST endpoint or a Google Sheet. It needs the order number and the buyer's email.", status: "1 action" },
+  { icon: Sparkles, name: "Learned answers", note: "What your team said in handed-over chats, approved by you.", status: "7 approved" },
 ];
 
-export function SourceBands() {
-  const [on, setOn] = useState<boolean[]>(SOURCES.map((_, i) => i === 0 || i === 4));
+/** Five ways to teach it, as the Train screen lists them. */
+export function SourcesFragment() {
+  const [on, setOn] = useState(0);
   return (
-    <ul>
-      {SOURCES.map((s, i) => (
-        <li
-          key={s.line}
-          className="transition-colors duration-[240ms]"
-          style={{ background: on[i] ? s.on : "transparent" }}
-        >
-          <div className="flex min-h-[132px] items-center gap-6 px-6 py-6 md:min-h-[20vh] md:px-10">
-            <div className="min-w-0 flex-1">
-              <p className={cn("text-[24px] font-semibold leading-tight tracking-[-0.02em] transition-colors md:text-[clamp(28px,2.6vw,36px)]", on[i] ? "text-white" : "text-white/60")}>{s.line}</p>
-              {on[i] && <p className="bubble-in mt-2 max-w-[60ch] text-[15px] text-white md:text-[17px]">{s.more}</p>}
-            </div>
+    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center">
+      <ul className="flex flex-col gap-1" role="tablist" aria-label="Sources">
+        {SOURCES.map((s, i) => (
+          <li key={s.name}>
             <button
               type="button"
-              role="switch"
-              aria-checked={on[i]}
-              aria-label={s.line}
-              data-ui
-              onClick={() => setOn((xs) => xs.map((x, j) => (j === i ? !x : x)))}
-              className="press flex min-h-11 min-w-11 shrink-0 items-center justify-center"
+              role="tab"
+              aria-selected={on === i}
+              onClick={() => setOn(i)}
+              onMouseEnter={() => setOn(i)}
+              className={cn(
+                "press flex w-full items-start gap-3 rounded-[12px] px-4 py-3.5 text-left",
+                on === i ? "bg-white shadow-[0_1px_2px_rgb(0_0_0/0.05),0_0_0_1px_rgb(31_27_22/0.08)]" : "hover:bg-paper-raised/60",
+              )}
             >
-              <span className={cn("flex h-8 w-14 items-center rounded-full p-1 transition-colors", on[i] ? "bg-white" : "bg-white/25")}>
-                <span className={cn("size-6 rounded-full transition-transform duration-[240ms]", on[i] ? "translate-x-6 bg-ink" : "bg-white")} />
+              <s.icon size={18} strokeWidth={1.5} className={cn("mt-0.5 shrink-0", on === i ? "text-primary" : "text-paper-ink-2")} aria-hidden />
+              <span>
+                <span className="block text-[16px] font-medium text-paper-ink">{s.name}</span>
+                <span className={cn("mt-1 block text-[14px] leading-relaxed text-paper-ink-2", on !== i && "max-lg:hidden")}>{s.note}</span>
               </span>
             </button>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-/* ---------- showcase: the Android agent app on a tall pill ---------- */
-
-type Row = { lang: string; text: string; age: string; mine?: boolean };
-
-function PhoneScreen({ view }: { view: number }) {
-  const waiting: Row[] = [
-    { lang: "HI", text: "Wants to change the delivery address", age: "now" },
-    { lang: "ES", text: "Return for a used cushion cover", age: "2 min" },
-    { lang: "EN", text: "Order LL-1003 still processing", age: "6 min" },
-  ];
-  return (
-    <div data-ui className="flex h-full flex-col bg-parchment text-ink">
-      <div className="flex items-center justify-between bg-canvas px-4 pb-3 pt-5">
-        <p className="text-[17px] font-semibold">Lumen &amp; Loom</p>
-        <span className="rounded-full bg-success/10 px-2 py-0.5 text-[13px] text-success">Online</span>
-      </div>
-      {view === 0 && (
-        <>
-          <div className="m-3 flex rounded-full bg-chip p-0.5 text-[13px]">
-            <span className="flex-1 rounded-full bg-canvas py-1.5 text-center font-semibold">Waiting (3)</span>
-            <span className="flex-1 py-1.5 text-center">Mine (1)</span>
-          </div>
-          <ul /* taste-skill-ignore: product list inside the data-ui fragment */ className="mx-3 divide-y divide-divider rounded-[18px] bg-canvas">
-            {waiting.map((r) => (
-              <li key={r.text} className="flex items-start gap-3 px-3 py-3">
-                <span className="mt-1.5 size-2 shrink-0 rounded-full bg-primary" aria-hidden />
-                <div className="min-w-0 flex-1">
-                  <p className="text-[15px] leading-snug">{r.text}</p>
-                  <p className="mt-0.5 text-[13px] text-ink-48">
-                    {r.lang} · {r.age}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-      {view === 1 && (
-        <div className="m-3 flex flex-col gap-3 rounded-[18px] bg-canvas p-4">
-          <p className="text-[13px] text-ink-48">Summary from the bot</p>
-          <p className="text-[15px] leading-snug">Buyer wants to change the delivery address on order LL-1002. Bot shared the change policy; the order has shipped.</p>
-          <span className="mt-1 rounded-full bg-primary py-2.5 text-center text-[15px] font-semibold text-white">Claim chat</span>
+          </li>
+        ))}
+      </ul>
+      <div className="overflow-hidden rounded-[16px] border border-paper-ink/10 bg-white shadow-[var(--shadow-product)]">
+        <div className="flex h-12 items-center justify-between border-b border-black/[0.06] px-4">
+          <span className="text-[14px] font-medium text-ink">Train</span>
+          <span className="t-fine text-ink-48">Lumen &amp; Loom</span>
         </div>
-      )}
-      {view === 2 && (
-        <div className="m-3 flex flex-col gap-2 rounded-[18px] bg-canvas p-3">
-          <Bubble who="buyer">¿Puedo devolver una funda de cojín usada?</Bubble>
-          <p className="px-1 text-[13px] text-ink-48">Translated: Can I return a used cushion cover?</p>
-          <Bubble who="agent">Yes, within 30 days if it is unused or faulty.</Bubble>
-          <p className="px-1 text-right text-[13px] text-ink-48">Sent to the buyer in Spanish</p>
-        </div>
-      )}
-      {view === 3 && (
-        <div className="m-3 flex flex-col gap-2">
-          <div className="rounded-[18px] bg-canvas p-3">
-            <p className="text-[13px] text-ink-48">BizzAssist · now</p>
-            <p className="mt-1 text-[15px] leading-snug">New chat waiting (HI): wants to change the delivery address</p>
-          </div>
-          <div className="rounded-[18px] bg-canvas p-3 opacity-80">
-            <p className="text-[13px] text-ink-48">BizzAssist · 4 min</p>
-            <p className="mt-1 text-[15px] leading-snug">New chat waiting (ES): return for a used cushion cover</p>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-const APP_VIEWS = [
-  { name: "Waiting chats", fact: "New chats arrive at the top, with the buyer's language and the bot's summary.", stage: "#0066cc" },
-  { name: "One-tap claim", fact: "Only one agent can claim a chat. The others see it leave their queue.", stage: "#1e7a35" },
-  { name: "Live translation", fact: "Buyer and agent each read the other in their own language.", stage: "#8a5a00" },
-  { name: "Push alerts", fact: "Every agent is alerted when a chat is handed to a person.", stage: "#1d1d1f" },
-];
-
-export function AgentAppShowcase() {
-  const [view, setView] = useState(0);
-  const v = APP_VIEWS[view];
-  return (
-    <div className="grid items-end gap-10 md:grid-cols-12">
-      <div className="order-2 md:order-1 md:col-span-4">
-        <h2 id="app-heading" className="mb-4 text-[clamp(28px,2.9vw,44px)] font-semibold leading-[1.15] tracking-[-0.02em] text-ink-48">
-          The agent app
-        </h2>
-        <ul className="flex gap-6 overflow-x-auto pb-2 md:flex-col md:gap-1 md:overflow-visible" aria-label="Agent app screens">
-          {APP_VIEWS.map((x, i) => (
-            <li key={x.name} className="shrink-0">
-              <button
-                type="button"
-                aria-pressed={i === view}
-                onClick={() => setView(i)}
-                className={cn(
-                  "min-h-11 text-left text-[26px] font-semibold leading-[1.15] tracking-[-0.02em] transition-colors md:text-[clamp(28px,2.9vw,44px)]",
-                  i === view ? "text-ink" : "text-ink-48 hover:text-ink-80",
-                )}
-              >
-                {x.name}
-              </button>
+        <ul className="divide-y divide-black/[0.05]">
+          {SOURCES.map((s, i) => (
+            <li key={s.name} className={cn("flex h-14 items-center gap-3 px-4 transition-colors duration-200", on === i ? "bg-primary-soft/60" : "")}>
+              <s.icon size={16} strokeWidth={1.5} className={on === i ? "text-primary" : "text-ink-48"} aria-hidden />
+              <span className="flex-1 text-[14px] text-ink">{s.name}</span>
+              <span className="t-mono text-ink-48">{s.status}</span>
+              <span className="flex items-center gap-1 text-[12px] text-success">
+                <Check size={14} aria-hidden /> Ready
+              </span>
             </li>
           ))}
         </ul>
-        <p className="mt-6 max-w-[40ch] text-[16px] text-ink md:hidden">{v.fact}</p>
       </div>
-      <div className="relative order-1 flex justify-center md:order-2 md:col-span-6 md:col-start-6">
-        {/* the tall pill: the source chip's shape at its largest */}
-        <div className="h-[86vw] max-h-[560px] w-[52vw] max-w-[340px] rounded-full transition-colors duration-300 md:h-[64vh] md:max-h-[640px] md:w-[min(26vw,380px)]" style={{ background: v.stage }} />
-        <div className="absolute -top-6 h-[calc(86vw_*_0.78_+_24px)] max-h-[460px] w-[44vw] max-w-[260px] overflow-hidden rounded-[32px] bg-canvas md:h-[calc(64vh_*_0.78_+_24px)] md:max-h-[520px] md:w-[min(20vw,290px)]">
-          <div key={view} className="bubble-in h-full">
-            <PhoneScreen view={view} />
-          </div>
-        </div>
-      </div>
-      <p className="order-3 hidden max-w-[24ch] text-[17px] text-ink md:col-span-2 md:block">{v.fact}</p>
     </div>
   );
 }
 
-/* ---------- how it works: one slider through the four stages ---------- */
+/** The agent inbox: queue with live wait timers and the summary the assistant writes on handover. */
+export function InboxFragment() {
+  return (
+    <div className="overflow-hidden rounded-[16px] border border-paper-ink/10 bg-white shadow-[var(--shadow-product)]">
+      <div className="grid sm:grid-cols-[220px_minmax(0,1fr)]">
+        <div className="border-b border-black/[0.06] bg-pearl p-2 sm:border-r sm:border-b-0">
+          <div className="mb-2 flex gap-1 rounded-[8px] bg-black/[0.04] p-0.5 text-[12px] font-medium">
+            <span className="flex-1 rounded-[6px] bg-white py-1 text-center shadow-[0_1px_2px_rgb(0_0_0/0.08)]">Waiting 2</span>
+            <span className="flex-1 py-1 text-center text-ink-48">Mine</span>
+          </div>
+          {[
+            { n: "Customer 7F2A", w: "1m 12s", l: "ES", x: "Return of a used cushion cover" },
+            { n: "Customer 03BD", w: "0m 31s", l: "HI", x: "Wants a bulk order invoice" },
+          ].map((r, i) => (
+            <div key={r.n} className={cn("rounded-[8px] px-3 py-2.5", i === 0 && "bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.06)]")}>
+              <p className="flex items-center gap-2 text-[13px] font-medium text-ink">
+                <span className="live-dot text-warning" />
+                <span className="flex-1">{r.n}</span>
+                <span className="t-mono text-warning">{r.w}</span>
+              </p>
+              <p className="mt-1 text-[12px] text-ink-80">{r.x}</p>
+              <p className="t-mono mt-1 text-ink-48">{r.l}</p>
+            </div>
+          ))}
+        </div>
+        <div className="p-5">
+          <p className="t-fine text-ink-48">Summary from the assistant</p>
+          <dl className="mt-3 flex flex-col gap-3 text-[13px]">
+            <div>
+              <dt className="text-ink-48">Issue</dt>
+              <dd className="text-ink">Wants to return a cushion cover she has used</dd>
+            </div>
+            <div>
+              <dt className="text-ink-48">What the assistant tried</dt>
+              <dd className="text-ink">Quoted the 30-day policy; it doesn&apos;t cover used items</dd>
+            </div>
+            <div>
+              <dt className="text-ink-48">Customer details</dt>
+              <dd className="text-ink">Order LL-1004, writes in Spanish</dd>
+            </div>
+          </dl>
+          <div className="mt-5 rounded-[10px] border border-dashed border-black/10 px-3 py-2">
+            <p className="t-fine flex items-center gap-1.5 text-ink-48">
+              <Languages size={12} aria-hidden /> Translated for you
+            </p>
+            <p className="mt-0.5 text-[13px] text-ink-80">Can I return a cushion cover I&apos;ve already used?</p>
+          </div>
+          <span className="mt-5 inline-flex h-9 items-center rounded-[10px] bg-primary px-4 text-[13px] font-medium text-white">Claim chat</span>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 const STAGES = [
-  { short: "Ask", clause: "First, a buyer asks" },
-  { short: "Hand over", clause: "Then the bot hands over" },
-  { short: "Answer", clause: "An agent answers once" },
-  { short: "Learn", clause: "Next time, the bot knows" },
+  { label: "Ask", line: "A customer asks something the assistant hasn't been taught.", who: "Customer", text: "¿Puedo devolver una funda de cojín que ya usé?" },
+  { label: "Hand over", line: "It says so, and passes the chat to your team with a summary. The customer sees their place in line.", who: "Assistant", text: "I'll get someone from the team for this. You're first in line." },
+  { label: "Answer", line: "Someone from your team answers, from the web inbox or the Android app. Each side reads the other in their own language.", who: "Support team", text: "Yes, within 30 days if it's faulty. Send a photo and we'll sort it." },
+  { label: "Learn", line: "The answer becomes a suggested Q&A. You approve it, and the assistant answers it from the next chat on.", who: "Assistant", text: "Yes, used items can come back within 30 days if faulty. Send us a photo." },
 ];
 
-function StageFragment({ stage }: { stage: number }) {
+/** The one live thing: drag through the learning loop. */
+export function LoopSlider() {
+  const [i, setI] = useState(0);
+  const s = STAGES[i];
   return (
-    <div data-ui className="w-full max-w-[440px] rounded-[18px] bg-canvas p-4">
-      <div className="flex flex-col gap-2.5">
-        <Bubble who="buyer">Can I return a cushion cover I already used?</Bubble>
-        {stage >= 1 && (
-          <>
-            <Bubble who="bot">I&apos;m connecting you with a member of our team. You&apos;re next in line.</Bubble>
-            <p className="self-center rounded-full bg-parchment px-3 py-1 text-[13px] text-ink-80">Waiting for a person</p>
-          </>
-        )}
-        {stage === 2 && <Bubble who="agent">Yes. Used items can be returned within 30 days if they are faulty. Send us a photo and we&apos;ll arrange it.</Bubble>}
-        {stage === 3 && (
-          <div className="mt-1 rounded-[18px] bg-parchment p-3">
-            <p className="text-[13px] text-ink-48">Suggested Q&amp;A from this chat</p>
-            <p className="mt-1 text-[15px] font-semibold">Can I return a used item?</p>
-            <p className="mt-0.5 text-[15px] text-ink-80">Within 30 days if it is faulty. Send a photo and we arrange it.</p>
-            <div className="mt-3 flex items-center gap-2">
-              <span className="rounded-full bg-primary px-4 py-1.5 text-[13px] font-semibold text-white">Approve</span>
-              <span className="text-[13px] text-success">Live on the next reply</span>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export function StageSlider() {
-  const [stage, setStage] = useState(0);
-  const fill = `${(stage / (STAGES.length - 1)) * 100}%`;
-  return (
-    <div className="grid md:min-h-[88svh] md:grid-cols-2">
-      <div className="order-2 flex flex-col bg-tile-1 px-6 py-10 text-white md:order-1 md:px-10 md:py-16">
-        <h2 id="how-heading" className="sr-only">
-          How it works
-        </h2>
-        <p key={stage} className="bubble-in text-[9vw] font-semibold leading-[1.02] tracking-[-0.03em] md:text-[clamp(40px,4.6vw,76px)]" aria-live="polite">
-          {STAGES[stage].clause}
-        </p>
-      </div>
-      <div className="order-1 flex min-h-[46svh] items-center justify-center bg-parchment px-4 py-10 md:order-2">
-        <div key={stage} className="bubble-in flex w-full justify-center">
-          <StageFragment stage={stage} />
-        </div>
-      </div>
-      <div className="order-3 bg-parchment px-6 pb-10 pt-4 md:col-span-2 md:px-10">
-        <input
-          type="range"
-          min={0}
-          max={STAGES.length - 1}
-          step={1}
-          value={stage}
-          onChange={(e) => setStage(Number(e.target.value))}
-          aria-label="Stage"
-          aria-valuetext={`${STAGES[stage].short}: ${STAGES[stage].clause}`}
-          className="stage-range"
-          style={{ "--fill": fill } as CSSProperties}
-        />
-        <ol className="mt-2 grid grid-cols-2 gap-2 text-[15px] md:grid-cols-4 md:text-[16px]">
-          {STAGES.map((s, i) => (
-            <li key={s.short} className={cn("md:text-center first:md:text-left last:md:text-right", i === stage ? "font-semibold text-ink" : "text-ink-48")}>
-              <button type="button" className="min-h-11" onClick={() => setStage(i)}>
-                {s.short}
+    <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:items-center">
+      <div>
+        <ol className="grid grid-cols-4 gap-2">
+          {STAGES.map((st, n) => (
+            <li key={st.label}>
+              <button type="button" onClick={() => setI(n)} className={cn("press w-full text-left", n === i ? "text-paper-ink" : "text-paper-ink-2 hover:text-paper-ink")}>
+                <span className="t-mono block">0{n + 1}</span>
+                <span className="mt-1 block text-[15px] font-medium">{st.label}</span>
               </button>
             </li>
           ))}
         </ol>
+        <label htmlFor="loop" className="sr-only">
+          Step of the learning loop
+        </label>
+        <input
+          id="loop"
+          type="range"
+          min={0}
+          max={3}
+          step={1}
+          value={i}
+          onChange={(e) => setI(Number(e.target.value))}
+          className="stage-range mt-4"
+          style={{ "--fill": `${(i / 3) * 100}%` } as CSSProperties}
+          aria-valuetext={s.label}
+        />
+        <p key={i} className="route-in mt-6 min-h-[84px] text-[18px] leading-relaxed text-paper-ink">
+          {s.line}
+        </p>
+      </div>
+      <div className="rounded-[16px] border border-paper-ink/10 bg-white p-6 shadow-[var(--shadow-product)]">
+        <div key={i} className="bubble-in">
+          <p className="t-fine flex items-center gap-1.5 text-ink-48">
+            {s.who === "Assistant" && <Mark size={12} />}
+            {s.who}
+          </p>
+          <p className={cn("mt-2 w-fit max-w-full rounded-[16px] px-4 py-2.5 text-[15px]", s.who === "Customer" ? "rounded-tl-[4px] border border-black/[0.07]" : s.who === "Support team" ? "rounded-tl-[4px] bg-ink text-white" : "rounded-tl-[4px] bg-parchment")}>
+            {s.text}
+          </p>
+          {i === 3 && (
+            <span className="mt-3 flex gap-1.5 text-ink-48">
+              <span className="slip text-primary">S1 Learned · Q&amp;A 08</span>
+            </span>
+          )}
+          {i === 2 && (
+            <p className="mt-3 text-[13px] text-ink-48">
+              The customer reads: <span className="text-ink-80">Sí, en 30 días si está defectuosa. Envíanos una foto.</span>
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** The Android agent app, as a phone-width fragment. */
+export function PhoneFragment() {
+  return (
+    <div className="mx-auto w-[260px] rounded-[38px] border border-paper-ink/15 bg-[#1b1a18] p-2.5 shadow-[var(--shadow-product)]">
+      <div className="overflow-hidden rounded-[30px] bg-pearl">
+        <div className="flex h-12 items-end justify-between px-5 pb-1 text-[11px] font-medium text-ink">
+          <span>9:41</span>
+          <span className="h-1.5 w-12 rounded-full bg-ink/80" />
+        </div>
+        <div className="px-4 pt-3 pb-5">
+          <p className="text-[20px] font-medium text-ink">Chats</p>
+          <div className="mt-3 flex gap-1 rounded-[10px] bg-black/[0.05] p-0.5 text-[12px] font-medium">
+            <span className="flex-1 rounded-[8px] bg-white py-1.5 text-center shadow-[0_1px_2px_rgb(0_0_0/0.08)]">Waiting 2</span>
+            <span className="flex-1 py-1.5 text-center text-ink-48">Mine</span>
+          </div>
+          {["Return of a used cushion cover", "Bulk order invoice"].map((x, n) => (
+            <div key={x} className="mt-2.5 rounded-[14px] bg-white p-3 shadow-[0_0_0_1px_rgb(0_0_0/0.05)]">
+              <p className="flex items-center gap-2 text-[12px] text-ink-48">
+                <span className="live-dot text-warning" />
+                <span className="t-mono">{n ? "HI" : "ES"}</span>
+                <span className="t-mono ml-auto text-warning">{n ? "0:31" : "1:12"}</span>
+              </p>
+              <p className="mt-1.5 text-[13px] font-medium text-ink">{x}</p>
+              <span className="mt-2.5 flex h-8 items-center justify-center rounded-[10px] bg-primary text-[12px] font-medium text-white">Claim chat</span>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

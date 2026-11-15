@@ -1,25 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Instrument_Sans, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 
-// Inter stands in for SF Pro off Apple platforms (DESIGN_SPEC.md section 3)
-const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+// Interface: Instrument Sans (warm, exact). Hero headlines only: Instrument Serif. Figures and meta: JetBrains Mono.
+const sans = Instrument_Sans({ variable: "--font-instrument-sans", subsets: ["latin"], display: "swap" });
+const serif = Instrument_Serif({ variable: "--font-instrument-serif", subsets: ["latin"], weight: "400", display: "swap" });
+const mono = JetBrains_Mono({ variable: "--font-jetbrains-mono", subsets: ["latin"], weight: ["400", "500"], display: "swap" });
 
 export const metadata: Metadata = {
   title: { default: "BizzAssist", template: "%s · BizzAssist" },
-  description: "AI customer support that learns from your agents.",
+  description: "Support chat for online shops. It answers from what you teach it, hands hard chats to your team, and learns from every answer they give.",
 };
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#fafafa",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
-      <body className="min-h-full" style={{ fontFeatureSettings: '"ss03"' }}>
-        {children}
-      </body>
+    <html lang="en" className={`${sans.variable} ${serif.variable} ${mono.variable} h-full`}>
+      <body className="min-h-full">{children}</body>
     </html>
   );
 }

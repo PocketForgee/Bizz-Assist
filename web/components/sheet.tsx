@@ -38,7 +38,7 @@ export function Sheet({
 
   return (
     <div className="fixed inset-0 z-40" role="dialog" aria-modal="true" aria-label={title}>
-      <button type="button" aria-label="Close" className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <button type="button" aria-label="Close" className="fade-in absolute inset-0 bg-[rgb(15_15_16/0.28)]" onClick={onClose} />
       <form
         ref={panel}
         noValidate
@@ -46,17 +46,17 @@ export function Sheet({
           e.preventDefault();
           onSubmit?.(e);
         }}
-        className={`route-in absolute inset-y-0 right-0 flex w-full flex-col bg-canvas shadow-[var(--shadow-pop)] ${wide ? "max-w-[560px]" : "max-w-[440px]"}`}
+        className={`sheet-in absolute inset-y-2 right-2 flex w-[calc(100%-16px)] flex-col overflow-hidden rounded-lg border border-hairline bg-canvas shadow-[var(--shadow-pop)] ${wide ? "max-w-[560px]" : "max-w-[440px]"}`}
       >
-        <div className="flex items-center justify-between border-b border-divider px-6 py-3">
-          <h2 className="t-tagline">{title}</h2>
-          <button type="button" onClick={onClose} aria-label="Close" className="press -mr-2 flex size-11 items-center justify-center rounded-full hover:bg-parchment">
+        <div className="flex h-14 items-center justify-between border-b border-hairline px-5">
+          <h2 className="text-[16px] font-medium">{title}</h2>
+          <button type="button" onClick={onClose} aria-label="Close" className="press -mr-2 flex size-9 items-center justify-center rounded-md text-ink-48 hover:bg-parchment hover:text-ink">
             <X size={18} aria-hidden />
           </button>
         </div>
-        <div className="flex flex-1 flex-col gap-4 overflow-y-auto px-6 py-5">{children}</div>
+        <div className="flex flex-1 flex-col gap-5 overflow-y-auto px-5 py-5">{children}</div>
         {(onSubmit || error) && (
-          <div className="flex flex-col gap-3 border-t border-divider px-6 py-4">
+          <div className="flex flex-col gap-3 border-t border-hairline bg-pearl px-5 py-4">
             {error && (
               <p className="t-caption text-danger" role="alert">
                 {error}
