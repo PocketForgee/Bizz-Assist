@@ -27,9 +27,6 @@ import java.util.concurrent.TimeUnit
 @Serializable data class MeResponse(val user: ApiUser)
 @Serializable data class LangBody(val lang: String)
 
-/** GET /api/agent/session: Nexconn token for this agent. */
-@Serializable data class ChatSession(val appKey: String, val areaCode: Int, val token: String, val userId: String, val name: String)
-
 @Serializable data class Summary(val issue: String? = null)
 @Serializable
 data class QueueRow(
@@ -50,20 +47,40 @@ data class QueueRow(
 
 @Serializable data class ClaimResponse(val groupId: String)
 
-@Serializable data class ProfilesBody(val userIds: List<String> = emptyList())
-@Serializable data class Profile(val userId: String, val name: String, val avatarUrl: String? = null)
-@Serializable data class ProfilesResponse(val users: List<Profile> = emptyList())
+/** GET /api/agent/conversations/{id}: the conversation and its stored transcript. */
+@Serializable
+data class ConvSummary(val issue: String? = null, val bot_tried: String? = null, val buyer_details: String? = null)
+@Serializable
+data class Conversation(
+    val id: String,
+    val status: String,
+    val nx_group_id: String,
+    val buyer_lang: String,
+    val summary: ConvSummary? = null,
+    val rating: Int? = null,
+    val resolved_by: String? = null,
+    val created_at: String,
+    val waiting_since: String? = null,
+    val assigned_user_id: String? = null,
+    val assigned_name: String? = null,
+    val widget: String,
+)
+@Serializable
+data class ChatMessage(val id: String, val role: String, val text: String, val translation: String? = null, val created_at: String)
+@Serializable data class DetailResponse(val conversation: Conversation, val messages: List<ChatMessage>)
+@Serializable data class SendBody(val text: String)
+@Serializable data class SendResponse(val message: ChatMessage)
 
 interface BizzApi {
     @POST("api/auth/login") suspend fun login(@Body body: LoginBody): LoginResponse
     @POST("api/auth/logout") suspend fun logout(@Body body: JsonObject = JsonObject(emptyMap())): JsonObject
     @GET("api/me") suspend fun me(): MeResponse
     @PATCH("api/me") suspend fun setLang(@Body body: LangBody): MeResponse
-    @GET("api/agent/session") suspend fun chatSession(): ChatSession
     @GET("api/agent/conversations") suspend fun queue(@Query("tab") tab: String): QueueResponse
     @POST("api/agent/conversations/{id}/claim") suspend fun claim(@Path("id") id: String, @Body body: JsonObject = JsonObject(emptyMap())): ClaimResponse
     @POST("api/agent/conversations/{id}/resolve") suspend fun resolve(@Path("id") id: String, @Body body: JsonObject = JsonObject(emptyMap())): JsonObject
-    @POST("api/agent/profiles") suspend fun profiles(@Body body: ProfilesBody): ProfilesResponse
+    @GET("api/agent/conversations/{id}") suspend fun detail(@Path("id") id: String): DetailResponse
+    @POST("api/agent/conversations/{id}/messages") suspend fun send(@Path("id") id: String, @Body body: SendBody): SendResponse
 }
 
 object Api {

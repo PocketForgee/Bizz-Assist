@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.first
 
 private val Context.store by preferencesDataStore("session")
 
-data class SavedSession(val token: String, val name: String, val lang: String, val role: String)
+data class SavedSession(val token: String, val userId: String, val name: String, val lang: String, val role: String)
 
 /**
  * The signed-in agent, kept across app restarts.
@@ -16,6 +16,7 @@ data class SavedSession(val token: String, val name: String, val lang: String, v
  */
 class SessionStore(private val context: Context) {
     private val kToken = stringPreferencesKey("token")
+    private val kUserId = stringPreferencesKey("userId")
     private val kName = stringPreferencesKey("name")
     private val kLang = stringPreferencesKey("lang")
     private val kRole = stringPreferencesKey("role")
@@ -23,12 +24,13 @@ class SessionStore(private val context: Context) {
     suspend fun load(): SavedSession? {
         val p = context.store.data.first()
         val token = p[kToken] ?: return null
-        return SavedSession(token, p[kName].orEmpty(), p[kLang] ?: "en", p[kRole] ?: "agent")
+        return SavedSession(token, p[kUserId].orEmpty(), p[kName].orEmpty(), p[kLang] ?: "en", p[kRole] ?: "agent")
     }
 
     suspend fun save(s: SavedSession) {
         context.store.edit {
             it[kToken] = s.token
+            it[kUserId] = s.userId
             it[kName] = s.name
             it[kLang] = s.lang
             it[kRole] = s.role

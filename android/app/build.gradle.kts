@@ -7,7 +7,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
-// Server URL and Nexconn App Key come from local.properties (see local.properties.example), never from git.
+// Server URL comes from local.properties (see local.properties.example); it defaults to the demo server.
 val local = Properties().apply {
     val f = rootProject.file("local.properties")
     if (f.exists()) f.inputStream().use { load(it) }
@@ -21,15 +21,12 @@ android {
     defaultConfig {
         applicationId = "app.bizzassist.agent"
         minSdk = 24
-        // 35, not 36: on 36 Android ignores the edge-to-edge opt-out that ChatUI's screens (built for 34) still need
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        targetSdk = 36
+        versionCode = 2
+        versionName = "2.0"
 
         val apiBase = localProp("bizzassist.apiBaseUrl", "https://137-23-61-46.sslip.io/").let { if (it.endsWith("/")) it else "$it/" }
         buildConfigField("String", "API_BASE_URL", "\"$apiBase\"")
-        buildConfigField("String", "NEXCONN_APP_KEY", "\"${localProp("bizzassist.nexconnAppKey")}\"")
-        buildConfigField("String", "NEXCONN_AREA", "\"${localProp("bizzassist.nexconnArea", "SG")}\"")
     }
 
     buildTypes {
@@ -55,9 +52,6 @@ kotlin {
 }
 
 dependencies {
-    // Nexconn Chat UI (pulls the matching Chat SDK, AppCompat and Glide)
-    implementation("ai.nexconn.chat:chatui:26.4.2")
-
     val composeBom = platform("androidx.compose:compose-bom:2025.01.00")
     implementation(composeBom)
     implementation("androidx.compose.material3:material3")
@@ -68,7 +62,6 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.7")
     implementation("androidx.core:core-ktx:1.15.0")
-    implementation("androidx.appcompat:appcompat:1.7.0")
 
     implementation("androidx.datastore:datastore-preferences:1.1.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.2")
