@@ -44,7 +44,7 @@ async function botNote(businessId: string, conversationId: string, groupId: stri
 /** The atomic part of a claim: exactly one caller gets the row back. */
 export async function takeConversation(user: Pick<Actor, "id" | "business_id">, conversationId: string) {
   const [conv] = await sql<{ id: string; nx_group_id: string }[]>`
-    update conversations set status = 'agent', assigned_user_id = ${user.id}
+    update conversations set status = 'agent', assigned_user_id = ${user.id}, claimed_at = now()
     where id = ${conversationId} and business_id = ${user.business_id} and status = 'waiting'
     returning id, nx_group_id
   `;
@@ -65,7 +65,7 @@ export async function claimConversation(user: Actor, conversationId: string): Pr
     await issueToken(user.nx_user_id, user.name); // make sure the Nexconn user exists before joining
     await joinGroup(conv.nx_group_id, [user.nx_user_id]);
   } catch (err) {
-    await sql`update conversations set status = 'waiting', assigned_user_id = null where id = ${conv.id} and assigned_user_id = ${user.id}`;
+    await sql`update conversations set status = 'waiting', assigned_user_id = null, claimed_at = null where id = ${conv.id} and assigned_user_id = ${user.id}`;
     console.error("[claim] join failed", err);
     throw new HttpError(502, "Couldn't join the chat. Try again.");
   }

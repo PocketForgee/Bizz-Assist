@@ -5,6 +5,7 @@ import { verifyWebhook } from "@/lib/nexconn";
 import { Deduper, parseMessageSend, type IncomingText } from "@/lib/webhook";
 import { enqueue } from "@/lib/queue";
 import { answerConversation } from "@/lib/ai/answer";
+import { relayTranslation } from "@/lib/ai/translate";
 
 const deduper = new Deduper();
 
@@ -58,5 +59,7 @@ async function ingest(m: IncomingText) {
 
   if (role === "buyer" && conv.status === "bot") {
     void enqueue(conv.id, () => answerConversation(conv.id));
+  } else if (conv.status === "agent") {
+    await relayTranslation(conv.id, role, m.text);
   }
 }

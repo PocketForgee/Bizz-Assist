@@ -144,3 +144,7 @@ alter table knowledge_items add column if not exists alternatives text[] not nul
 alter table knowledge_items add column if not exists conversation_id uuid references conversations(id) on delete set null;
 -- one row per URL per business, so re-adding a page re-syncs it instead of duplicating
 create unique index if not exists knowledge_web_url_uidx on knowledge_items(business_id, url) where source = 'web';
+
+-- ---- Phase 3 additions (idempotent) ----
+-- when an agent took the chat; claimed_at - waiting_since = buyer wait time (analytics)
+alter table conversations add column if not exists claimed_at timestamptz;

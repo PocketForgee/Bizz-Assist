@@ -11,7 +11,7 @@ export default async function AgentPage({ searchParams }: { searchParams: Promis
   const { c } = await searchParams;
   return (
     <div className="flex h-dvh flex-col">
-      <AgentBar name={user.name} business={user.business_name} isOwner={user.role === "owner"} />
+      <AgentBar name={user.name} business={user.business_name} isOwner={user.role === "owner"} lang={user.lang} />
       <AgentInbox me={{ id: user.id, role: user.role }} initialConversation={c} className="min-h-0 flex-1" />
     </div>
   );
