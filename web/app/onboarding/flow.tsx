@@ -1,0 +1,174 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useState, type FormEvent } from "react";
+import { Check } from "lucide-react";
+import { api } from "@/lib/client";
+import { Button, Field, Input, cn } from "@/components/ui";
+import { Wordmark } from "@/components/auth-shell";
+
+const STEPS = ["Business", "Website", "Done"] as const;
+
+const LANGS = [
+  { code: "en", label: "English" },
+  { code: "hi", label: "Hindi" },
+  { code: "es", label: "Spanish" },
+  { code: "ar", label: "Arabic" },
+  { code: "fr", label: "French" },
+  { code: "de", label: "German" },
+  { code: "pt", label: "Portuguese" },
+  { code: "id", label: "Indonesian" },
+];
+
+const SWATCHES = ["#0066cc", "#1d1d1f", "#248a3d", "#b25000", "#8e44ad", "#d70015"];
+
+export function OnboardingFlow({ businessName }: { businessName: string }) {
+  const router = useRouter();
+  const [step, setStep] = useState(0);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<{ field?: string; message: string } | null>(null);
+  const [widgetId, setWidgetId] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    category: "",
+    defaultLang: "en",
+    supportHours: "",
+    website: "",
+    color: "#0066cc",
+    greeting: "Hi! How can we help you today?",
+  });
+  const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
+  const err = (field: string) => (error?.field === field ? error.message : undefined);
+
+  async function finish(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    const res = await api<{ widgetId: string }>("/api/onboarding", {
+      body: {
+        category: form.category,
+        defaultLang: form.defaultLang,
+        supportHours: form.supportHours,
+        website: form.website,
+        widget: { name: "Website chat", color: form.color, greeting: form.greeting, title: businessName.slice(0, 60) },
+      },
+    });
+    setBusy(false);
+    if (!res.ok) {
+      setError({ field: res.field, message: res.error });
+      if (res.field && ["category", "defaultLang", "supportHours"].includes(res.field)) setStep(0);
+      return;
+    }
+    setWidgetId(res.data.widgetId);
+    setStep(2);
+  }
+
+  return (
+    <main className="min-h-dvh bg-parchment">
+      <div className="h-[3px] bg-hairline" aria-hidden>
+        <div className="h-full bg-primary transition-[width] duration-300" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
+      </div>
+      <div className="mx-auto flex max-w-[480px] flex-col items-center px-4 py-12">
+        <Wordmark className="mb-6 text-ink" />
+        <ol className="mb-6 flex gap-6" aria-label="Setup steps">
+          {STEPS.map((s, i) => (
+            <li key={s} aria-current={i === step ? "step" : undefined} className={cn("t-caption-strong", i <= step ? "text-ink" : "text-ink-48")}>
+              {i + 1}. {s}
+            </li>
+          ))}
+        </ol>
+
+        <div key={step} className="route-in w-full rounded-lg border border-hairline bg-canvas p-8">
+          {step === 0 && (
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                setStep(1);
+              }}
+            >
+              <h1 className="t-tagline">Tell us about {businessName}</h1>
+              <Field label="What do you sell?" hint="For example: handmade jewellery, phone repairs." error={err("category")}>
+                {(a) => <Input {...a} value={form.category} onChange={(e) => set("category")(e.target.value)} maxLength={60} />}
+              </Field>
+              <Field label="Main customer language" error={err("defaultLang")}>
+                {(a) => (
+                  <select {...a} value={form.defaultLang} onChange={(e) => set("defaultLang")(e.target.value)} className="min-h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-[17px]">
+                    {LANGS.map((l) => (
+                      <option key={l.code} value={l.code}>
+                        {l.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
+              </Field>
+              <Field label="When can a person reply?" hint="Shown to the bot, e.g. Mon–Sat 10:00–19:00 IST." error={err("supportHours")}>
+                {(a) => <Input {...a} value={form.supportHours} onChange={(e) => set("supportHours")(e.target.value)} maxLength={120} />}
+              </Field>
+              <Button type="submit" className="mt-2 w-full">
+                Continue
+              </Button>
+            </form>
+          )}
+
+          {step === 1 && (
+            <form className="flex flex-col gap-4" onSubmit={finish} noValidate>
+              <h1 className="t-tagline">Your website and chat</h1>
+              <Field label="Website" hint="Optional. You can add pages to train on later." error={err("website")}>
+                {(a) => <Input {...a} type="url" inputMode="url" placeholder="yourshop.com" value={form.website} onChange={(e) => set("website")(e.target.value)} />}
+              </Field>
+              <fieldset className="flex flex-col gap-1.5">
+                <legend className="t-caption-strong mb-1.5">Chat colour</legend>
+                <div className="flex gap-2">
+                  {SWATCHES.map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      aria-label={`Colour ${c}`}
+                      aria-pressed={form.color === c}
+                      onClick={() => set("color")(c)}
+                      className={cn("press size-11 rounded-full border-2", form.color === c ? "border-primary-focus" : "border-transparent")}
+                      style={{ background: c }}
+                    />
+                  ))}
+                </div>
+                {err("color") && <p className="t-caption text-danger">{err("color")}</p>}
+              </fieldset>
+              <Field label="Greeting" error={err("greeting")}>
+                {(a) => <Input {...a} value={form.greeting} onChange={(e) => set("greeting")(e.target.value)} maxLength={300} />}
+              </Field>
+              {error && !["website", "color", "greeting"].includes(error.field ?? "") && (
+                <p className="t-caption text-danger" role="alert">
+                  {error.message}
+                </p>
+              )}
+              <div className="mt-2 flex gap-3">
+                <Button variant="secondary" onClick={() => setStep(0)}>
+                  Back
+                </Button>
+                <Button type="submit" disabled={busy} className="flex-1">
+                  {busy ? "Saving…" : "Create my chat"}
+                </Button>
+              </div>
+            </form>
+          )}
+
+          {step === 2 && (
+            <div className="flex flex-col items-center gap-4 text-center">
+              <span className="flex size-12 items-center justify-center rounded-full bg-success/10 text-success">
+                <Check aria-hidden size={24} />
+              </span>
+              <h1 className="t-tagline">Your chat is ready</h1>
+              <p className="t-caption text-ink-48">Add a few Q&amp;A answers so the bot has something to say, then put the chat on your site.</p>
+              <Button className="w-full" onClick={() => router.replace(widgetId ? `/app/widgets/${widgetId}?tab=install` : "/app")}>
+                Get the install code
+              </Button>
+              <Button variant="ghost" onClick={() => router.replace("/app/train")}>
+                Add Q&amp;A first
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+    </main>
+  );
+}
