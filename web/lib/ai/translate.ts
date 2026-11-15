@@ -4,27 +4,48 @@ import { baseLang, langName } from "../langs";
 import { sendGroupText } from "../nexconn";
 import { askLLM, MODEL_LITE } from "./llm";
 
-const SAME = "<<SAME>>";
+const SCHEMA = {
+  type: "object",
+  properties: {
+    source: { type: "string", description: "ISO 639-1 code of the message's language, e.g. es" },
+    translation: { type: "string", description: "The message in the target language; empty when it is already in it" },
+  },
+  required: ["source", "translation"],
+};
 
-/** Lite-model translation. Null when the text is already in `to`, or the model fails. */
-export async function translate(text: string, to: string): Promise<string | null> {
+/**
+ * Lite-model translation that also detects the source language.
+ * `translation` is null when the text is already in `to`; the whole result is null when the model fails.
+ */
+export async function translate(text: string, to: string): Promise<{ source: string; translation: string | null } | null> {
   const target = langName(baseLang(to));
   const res = await askLLM({
     model: MODEL_LITE(),
     system:
-      `Translate the customer-support chat message into ${target}. Reply with the translation only, no notes or quotes. ` +
-      `Keep order numbers, emails, links and product names unchanged. If the message is already in ${target}, reply with exactly ${SAME}.`,
+      `You translate customer-support chat messages into ${target}. Keep order numbers, emails, links and product names unchanged. ` +
+      `Return the message's language as an ISO 639-1 code, and the translation with no notes or quotes. ` +
+      `If the message is already in ${target}, return an empty translation.`,
     contents: [{ role: "user", parts: [{ text }] }],
+    json: { schema: SCHEMA },
     temperature: 0,
   });
-  if (!res.ok || !res.text || res.text.includes(SAME)) return null;
-  return res.text.slice(0, 4000);
+  if (!res.ok) return null;
+  try {
+    const out = JSON.parse(res.text) as { source?: unknown; translation?: unknown };
+    const source = typeof out.source === "string" && /^[a-z]{2,3}$/i.test(out.source.trim()) ? out.source.trim().toLowerCase() : "";
+    const translation = typeof out.translation === "string" && out.translation.trim() ? out.translation.trim().slice(0, 4000) : null;
+    if (!source) return null;
+    return { source, translation: baseLang(source) === baseLang(to) ? null : translation };
+  } catch {
+    return null;
+  }
 }
 
 /**
- * Live translation between buyer and the assigned agent when their languages differ.
- * The copy goes into the group as the bot, addressed only to the reader (`toUserIds`),
- * and is not stored: the original stays the record.
+ * Live translation between the buyer and the assigned agent.
+ * Buyer messages are always checked (the browser locale is only a guess); the detected language is saved
+ * as buyer_lang so agent replies go back in the language the buyer actually writes.
+ * The copy goes into the group as the bot, addressed only to the reader (`toUserIds`), and is not stored.
  */
 export async function relayTranslation(conversationId: string, role: "buyer" | "agent", text: string) {
   const [c] = await sql<{ business_id: string; nx_group_id: string; guest_nx_id: string; buyer_lang: string; agent_nx: string | null; agent_lang: string | null }[]>`
@@ -32,14 +53,19 @@ export async function relayTranslation(conversationId: string, role: "buyer" | "
     from conversations c left join users u on u.id = c.assigned_user_id
     where c.id = ${conversationId} and c.status = 'agent'
   `;
-  if (!c?.agent_nx || !c.agent_lang || baseLang(c.buyer_lang) === baseLang(c.agent_lang)) return;
+  if (!c?.agent_nx || !c.agent_lang) return;
+  if (role === "agent" && baseLang(c.buyer_lang) === baseLang(c.agent_lang)) return;
 
   const to = role === "buyer" ? c.agent_lang : c.buyer_lang;
-  const reader = role === "buyer" ? c.agent_nx : c.guest_nx_id;
   const out = await translate(text, to);
   if (!out) return;
+  if (role === "buyer" && baseLang(out.source) !== baseLang(c.buyer_lang)) {
+    await sql`update conversations set buyer_lang = ${out.source} where id = ${conversationId}`;
+  }
+  if (!out.translation) return;
   try {
-    await sendGroupText(nxId.bot(c.business_id), c.nx_group_id, `Translated: ${out}`, [reader]);
+    const reader = role === "buyer" ? c.agent_nx : c.guest_nx_id;
+    await sendGroupText(nxId.bot(c.business_id), c.nx_group_id, `Translated: ${out.translation}`, [reader]);
   } catch (err) {
     console.error("[translate] send failed", err);
   }
