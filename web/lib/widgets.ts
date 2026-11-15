@@ -1,4 +1,4 @@
-import { HEX_COLOR, HttpError, str, strList } from "./http";
+import { HEX_COLOR, HttpError, isUuid, str, strList } from "./http";
 
 export type Widget = {
   id: string;
@@ -22,7 +22,7 @@ export type Widget = {
 export type PublicWidget = Pick<Widget, "id" | "name" | "type" | "color" | "title" | "greeting" | "avatar"> & { business_name: string };
 
 export type WidgetPatch = Partial<
-  Pick<Widget, "name" | "type" | "color" | "title" | "greeting" | "avatar" | "languages" | "persona" | "allowed_domains" | "escalation_keywords">
+  Pick<Widget, "name" | "type" | "color" | "title" | "greeting" | "avatar" | "languages" | "persona" | "allowed_domains" | "escalation_keywords" | "enabled_action_ids">
 >;
 
 /** "https://Shop.example.com/path" -> "shop.example.com"; "*.example.com" stays a wildcard. */
@@ -63,6 +63,11 @@ export function parseWidgetPatch(body: Record<string, unknown>): WidgetPatch {
     p.allowed_domains = [...new Set(domains as string[])];
   }
   if ("escalation_keywords" in body) p.escalation_keywords = strList(body, "escalation_keywords", { maxItems: 30, maxLen: 40 }).map((k) => k.toLowerCase());
+  if ("enabled_action_ids" in body) {
+    const ids = Array.isArray(body.enabled_action_ids) ? body.enabled_action_ids : [];
+    if (ids.length > 50 || !ids.every(isUuid)) throw new HttpError(400, "Unknown action.", "enabled_action_ids");
+    p.enabled_action_ids = [...new Set(ids as string[])];
+  }
   return p;
 }
 

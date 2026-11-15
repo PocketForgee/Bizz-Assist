@@ -19,6 +19,10 @@ export const PATCH = handle(async (req: Request, ctx: Ctx) => {
   const id = requireUuid((await ctx.params).id, "widget");
   const patch = parseWidgetPatch(await readJson(req));
   if (!Object.keys(patch).length) throw new HttpError(400, "Nothing to update.");
+  if (patch.enabled_action_ids?.length) {
+    const own = await sql`select id from api_actions where business_id = ${user.business_id} and id = any(${patch.enabled_action_ids})`;
+    if (own.length !== patch.enabled_action_ids.length) throw new HttpError(400, "Unknown action.", "enabled_action_ids");
+  }
 
   const [widget] = await sql<Widget[]>`
     update widgets set ${sql(patch as Record<string, unknown>)}, updated_at = now()
