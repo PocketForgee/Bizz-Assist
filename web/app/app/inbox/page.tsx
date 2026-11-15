@@ -14,13 +14,14 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
     <>
       <SubNav
         title="Inbox"
+        lead="Chats the assistant handed to a person"
         action={
-          <Link href={c ? `/agent?c=${c}` : "/agent"} className="t-caption text-primary hover:underline">
+          <Link href={c ? `/agent?c=${c}` : "/agent"} className="press inline-flex min-h-9 items-center rounded-md px-3 text-[14px] text-ink-80 hover:bg-parchment hover:text-ink">
             Open full screen
           </Link>
         }
       />
-      <AgentInbox me={{ id: user.id, role: user.role }} initialConversation={c} className="h-[calc(100dvh-44px-52px-48px)] overflow-hidden rounded-lg border border-hairline" />
+      <AgentInbox me={{ id: user.id, role: user.role }} initialConversation={c} className="h-[calc(100dvh-64px-32px-24px)] overflow-hidden rounded-lg border border-hairline shadow-[0_1px_2px_rgb(0_0_0/0.04)] max-[899px]:h-[calc(100dvh-56px-64px-32px-24px)]" />
     </>
   );
 }

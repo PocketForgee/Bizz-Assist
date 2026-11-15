@@ -18,7 +18,7 @@ export default async function WidgetsPage() {
 
   return (
     <>
-      <SubNav title="Widgets" action={<NewWidgetButton disabledReason={atLimit ? "Your plan's widget limit is reached. Upgrade on the Plan page." : undefined} />} />
+      <SubNav title="Widgets" lead="The chats on your site, links and QR codes" action={<NewWidgetButton disabledReason={atLimit ? "Your plan's widget limit is reached. Upgrade on the Plan page." : undefined} />} />
       {widgets.length === 0 ? (
         <Card>
           <EmptyState line="A widget is the chat your customers see. Create one to get an install code." action={<NewWidgetButton />} />

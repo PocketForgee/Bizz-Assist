@@ -139,7 +139,7 @@ function AddAgentSheet({ onClose, onAdded }: { onClose: () => void; onAdded: (m:
       </Field>
       <Field label="Language they reply in">
         {(p) => (
-          <select {...p} value={lang} onChange={(e) => setLang(e.target.value)} className="min-h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-[17px]">
+          <select {...p} value={lang} onChange={(e) => setLang(e.target.value)} className="min-h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-[15px]">
             {LANGS.map(([code, label]) => (
               <option key={code} value={code}>
                 {label}

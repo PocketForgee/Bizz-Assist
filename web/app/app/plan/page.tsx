@@ -14,7 +14,7 @@ export default async function PlanPage() {
   const currentIdx = ORDER.indexOf(user.plan);
   return (
     <>
-      <SubNav title="Plan" />
+      <SubNav title="Plan" lead="What your plan includes, and how much of it you use" />
       <p className="t-caption mb-6 flex items-center gap-2 text-ink-48">
         <Chip tone="warning">Demo</Chip> Plan changes apply at once and nothing is charged.
       </p>

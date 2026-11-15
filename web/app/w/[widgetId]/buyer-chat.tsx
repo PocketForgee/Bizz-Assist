@@ -227,7 +227,7 @@ export function BuyerChat({ widget, embed }: { widget: PublicWidget; embed: bool
       placeholder={closed ? "This conversation is closed" : "Write a message"}
       notice={
         error ? (
-          <p className="t-caption mx-4 mb-2 rounded-md bg-danger/10 px-3 py-2 text-danger" role="alert">
+          <p className="t-caption mx-3 mb-2 rounded-md bg-danger/8 px-3 py-2 text-danger" role="alert">
             {error}
           </p>
         ) : closed && session ? (
@@ -235,14 +235,14 @@ export function BuyerChat({ widget, embed }: { widget: PublicWidget; embed: bool
         ) : null
       }
       onClose={embed ? () => window.parent.postMessage({ type: "bizzassist:close" }, "*") : undefined}
-      className={cn(!embed && "md:rounded-lg md:border md:border-hairline")}
+      className={cn(!embed && "md:overflow-hidden md:rounded-[20px] md:border md:border-hairline md:shadow-[0_24px_48px_-16px_rgb(0_0_0/0.18)]")}
     />
   );
 
   if (embed) return <div className="h-dvh">{view}</div>;
   return (
-    <main className="flex h-dvh justify-center bg-canvas md:bg-parchment md:py-8">
-      <div className="h-full w-full md:max-w-[440px]">{view}</div>
+    <main className="flex h-dvh justify-center bg-canvas md:items-center md:bg-[#efeff1] md:py-8">
+      <div className="h-full w-full md:h-[min(760px,100%)] md:max-w-[420px]">{view}</div>
     </main>
   );
 }
@@ -262,7 +262,7 @@ function RatingBar({ widgetId, guestId, accent }: { widgetId: string; guestId: s
   }
 
   return (
-    <div className="mx-4 mb-2 flex flex-col items-center gap-2 rounded-lg bg-parchment px-4 py-3 text-center">
+    <div className="bubble-in mx-3 mb-3 flex flex-col items-center gap-3 rounded-[14px] border border-hairline bg-canvas px-4 py-4 text-center shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
       {sent ? (
         <>
           <p className="t-caption-strong" role="status">
@@ -286,7 +286,7 @@ function RatingBar({ widgetId, guestId, accent }: { widgetId: string; guestId: s
                 aria-checked={rating === n}
                 aria-label={`${n} out of 5`}
                 onClick={() => rate(n)}
-                className="press flex size-11 items-center justify-center rounded-full border border-hairline bg-canvas t-body-strong"
+                className="press flex size-11 items-center justify-center rounded-[10px] border border-hairline bg-canvas t-body-strong tabular-nums hover:border-[var(--accent)] hover:text-[var(--accent)]"
                 style={rating === n ? { background: accent, color: onAccent(accent), borderColor: accent } : undefined}
               >
                 {n}

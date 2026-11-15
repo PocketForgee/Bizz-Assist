@@ -7,8 +7,8 @@ import { Card, EmptyState, SubNav } from "@/components/ui";
 export const metadata: Metadata = { title: "Analytics" };
 
 // Chart colours, checked with the dataviz palette validator (light surface, CVD-safe pair).
-const AI = "#0066cc";
-const HUMAN = "#9a6a00";
+const AI = "var(--primary)"; // the one accent: what the assistant solved
+const HUMAN = "#8e8e93"; // neutral step: handed to a person
 
 const REASON: Record<string, string> = {
   no_info: "Knowledge didn't cover it",
@@ -101,12 +101,12 @@ export default async function AnalyticsPage() {
 
   return (
     <>
-      <SubNav title="Analytics" />
-      <div className="mb-6 grid grid-cols-2 gap-4 lg:grid-cols-5">
-        {stats.map((s) => (
+      <SubNav title="Analytics" lead="Last 30 days, unless a chart says otherwise" />
+      <div className="stagger mb-6 grid grid-cols-2 gap-3 lg:grid-cols-5">
+        {stats.map((s, n) => (
           <Card key={s.label} className="p-5">
             <p className="t-caption text-ink-48">{s.label}</p>
-            <p className="t-tagline mt-1 tabular-nums">{s.value}</p>
+            <p className={n === 0 ? "t-figure mt-3 text-primary" : "t-figure mt-3 text-ink"}>{s.value}</p>
             <p className="t-fine mt-1 text-ink-48">{s.sub}</p>
           </Card>
         ))}

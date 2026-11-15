@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogOut } from "lucide-react";
+import { Languages, LogOut } from "lucide-react";
 import { useState } from "react";
 import { api } from "@/lib/client";
 import { LANGS } from "@/lib/langs";
+import { Wordmark } from "@/components/brand";
 
 export function AgentBar({ name, business, isOwner, lang }: { name: string; business: string; isOwner: boolean; lang: string }) {
   const router = useRouter();
@@ -25,23 +26,20 @@ export function AgentBar({ name, business, isOwner, lang }: { name: string; busi
     router.refresh();
   }
   return (
-    <header className="flex h-11 shrink-0 items-center gap-3 bg-black px-4 text-white">
-      <span className="text-[15px] font-semibold tracking-tight">BizzAssist</span>
-      <span className="hidden truncate text-[12px] text-white/60 sm:inline">{business}</span>
-      <div className="ml-auto flex items-center gap-4 text-[12px]">
+    <header className="flex h-14 shrink-0 items-center gap-4 border-b border-hairline bg-canvas px-4">
+      <Wordmark href={isOwner ? "/app" : "/agent"} />
+      <span className="hidden h-5 w-px bg-hairline sm:block" aria-hidden />
+      <span className="hidden truncate text-[14px] text-ink-48 sm:inline">{business}</span>
+      <div className="ml-auto flex items-center gap-1">
         {isOwner && (
-          <Link href="/app" className="text-white/80 hover:text-white">
+          <Link href="/app" className="press hidden min-h-9 items-center rounded-md px-3 text-[14px] text-ink-80 hover:bg-parchment hover:text-ink sm:inline-flex">
             Dashboard
           </Link>
         )}
-        <label className="flex items-center gap-1.5 text-white/80">
-          <span className="hidden sm:inline">Translate chats to</span>
-          <select
-            aria-label="Translate chats to"
-            value={myLang}
-            onChange={(e) => changeLang(e.target.value)}
-            className="min-h-8 rounded-sm bg-white/10 px-1.5 text-white [&>option]:text-ink"
-          >
+        <label className="press flex min-h-9 items-center gap-2 rounded-md px-2 text-[14px] text-ink-80 hover:bg-parchment" title="Customer messages are translated into this language">
+          <Languages size={16} strokeWidth={1.5} className="text-ink-48" aria-hidden />
+          <span className="hidden md:inline">Translate to</span>
+          <select aria-label="Translate chats to" value={myLang} onChange={(e) => changeLang(e.target.value)} className="cursor-pointer bg-transparent font-medium text-ink focus:outline-none">
             {LANGS.map((l) => (
               <option key={l.code} value={l.code}>
                 {l.label}
@@ -49,9 +47,12 @@ export function AgentBar({ name, business, isOwner, lang }: { name: string; busi
             ))}
           </select>
         </label>
-        <span className="hidden text-white/80 sm:inline">{name}</span>
-        <button type="button" onClick={logout} className="press flex min-h-11 items-center gap-1 text-white/80 hover:text-white">
-          <LogOut size={14} aria-hidden /> Sign out
+        <span className="mx-2 hidden h-5 w-px bg-hairline sm:block" aria-hidden />
+        <span aria-hidden className="hidden size-8 items-center justify-center rounded-full bg-ink text-[12px] font-medium text-white sm:flex">
+          {name.trim().charAt(0).toUpperCase() || "?"}
+        </span>
+        <button type="button" onClick={logout} aria-label="Sign out" title="Sign out" className="press flex size-9 items-center justify-center rounded-md text-ink-48 hover:bg-parchment hover:text-ink">
+          <LogOut size={16} strokeWidth={1.5} aria-hidden />
         </button>
       </div>
     </header>

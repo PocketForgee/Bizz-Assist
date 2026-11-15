@@ -55,21 +55,26 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
   }
 
   return (
-    <main className="min-h-dvh bg-parchment">
-      <div className="h-[3px] bg-hairline" aria-hidden>
-        <div className="h-full bg-primary transition-[width] duration-300" style={{ width: `${((step + 1) / STEPS.length) * 100}%` }} />
-      </div>
-      <div className="mx-auto flex max-w-[480px] flex-col items-center px-4 py-12">
-        <Wordmark className="mb-6 text-ink" />
-        <ol className="mb-6 flex gap-6" aria-label="Setup steps">
+    <main className="min-h-dvh bg-pearl">
+      <div className="mx-auto flex max-w-[520px] flex-col px-6 py-8">
+        <div className="flex items-center justify-between">
+          <Wordmark />
+          <span className="t-mono text-ink-48">
+            {step + 1} / {STEPS.length}
+          </span>
+        </div>
+        <ol className="mt-14 mb-8 grid gap-2" style={{ gridTemplateColumns: `repeat(${STEPS.length}, minmax(0, 1fr))` }} aria-label="Setup steps">
           {STEPS.map((s, i) => (
-            <li key={s} aria-current={i === step ? "step" : undefined} className={cn("t-caption-strong", i <= step ? "text-ink" : "text-ink-48")}>
-              {i + 1}. {s}
+            <li key={s} aria-current={i === step ? "step" : undefined}>
+              <span className="block h-1 overflow-hidden rounded-full bg-parchment">
+                <span className="block h-full rounded-full bg-primary transition-[width] duration-500" style={{ width: i <= step ? "100%" : "0%" }} />
+              </span>
+              <span className={cn("t-fine mt-2 block", i <= step ? "text-ink" : "text-ink-48")}>{s}</span>
             </li>
           ))}
         </ol>
 
-        <div key={step} className="route-in w-full rounded-lg border border-hairline bg-canvas p-8">
+        <div key={step} className="route-in w-full rounded-lg border border-hairline bg-canvas p-8 shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
           {step === 0 && (
             <form
               className="flex flex-col gap-4"
@@ -78,13 +83,13 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
                 setStep(1);
               }}
             >
-              <h1 className="t-tagline">Tell us about {businessName}</h1>
+              <h1 className="t-section">Tell us about {businessName}</h1>
               <Field label="What do you sell?" hint="For example: handmade jewellery, phone repairs." error={err("category")}>
                 {(a) => <Input {...a} value={form.category} onChange={(e) => set("category")(e.target.value)} maxLength={60} />}
               </Field>
               <Field label="Main customer language" error={err("defaultLang")}>
                 {(a) => (
-                  <select {...a} value={form.defaultLang} onChange={(e) => set("defaultLang")(e.target.value)} className="min-h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-[17px]">
+                  <select {...a} value={form.defaultLang} onChange={(e) => set("defaultLang")(e.target.value)} className="min-h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-[15px] focus:border-primary focus:outline-none">
                     {LANGS.map((l) => (
                       <option key={l.code} value={l.code}>
                         {l.label}
@@ -104,12 +109,12 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
 
           {step === 1 && (
             <form className="flex flex-col gap-4" onSubmit={finish} noValidate>
-              <h1 className="t-tagline">Your website and chat</h1>
+              <h1 className="t-section">Your website and chat</h1>
               <Field label="Website" hint="Optional. You can add pages to train on later." error={err("website")}>
                 {(a) => <Input {...a} type="url" inputMode="url" placeholder="yourshop.com" value={form.website} onChange={(e) => set("website")(e.target.value)} />}
               </Field>
               <fieldset className="flex flex-col gap-1.5">
-                <legend className="t-caption-strong mb-1.5">Chat colour</legend>
+                <legend className="t-caption-strong mb-1.5 text-ink-80">Chat colour</legend>
                 <div className="flex gap-2">
                   {SWATCHES.map((c) => (
                     <button
@@ -118,7 +123,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
                       aria-label={`Colour ${c}`}
                       aria-pressed={form.color === c}
                       onClick={() => set("color")(c)}
-                      className={cn("press size-11 rounded-full border-2", form.color === c ? "border-primary-focus" : "border-transparent")}
+                      className={cn("press size-10 rounded-[10px] ring-offset-2 ring-offset-canvas", form.color === c ? "ring-2 ring-ink" : "ring-1 ring-hairline")}
                       style={{ background: c }}
                     />
                   ))}

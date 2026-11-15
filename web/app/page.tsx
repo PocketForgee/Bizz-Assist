@@ -1,219 +1,232 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import { ArrowRight } from "lucide-react";
 import { PLAN_LABEL, PLAN_LIMITS, type Plan } from "@/lib/plans";
-import { AgentAppShowcase, SourceBands, SourceChip, StageSlider } from "@/components/landing";
+import { Mark, Wordmark } from "@/components/brand";
+import { HeroChat, InboxFragment, LoopSlider, PhoneFragment, SourcesFragment } from "@/components/landing";
 
 export const metadata: Metadata = {
   title: "BizzAssist: support chat that learns your shop",
-  description: "AI customer support for online shops. Answers from your website, documents and Q&A, hands hard chats to your team, and learns from every reply.",
+  description: "Support chat for online shops. It answers from your website, documents and order data, hands hard chats to your team, and learns from every answer they give.",
 };
 
-// Idea: the source chip ([S1]) every answer carries is the page's one shape. It is the hero stage's corner,
-// the agent-app pill, the slider thumb, the plan tiles' ends and the footer blocks.
+// Idea: a shop's service counter. Every answer carries a slip saying where it came from, and every answer
+// a person gives becomes a new slip the assistant can use. The slip is the page's one recurring shape.
 const fmt = (n: number) => n.toLocaleString("en-US");
-const PLANS: { plan: Plan; h: string; bg: string; strip: string; ink: string; cta: string }[] = [
-  { plan: "free", h: "md:h-[360px]", bg: "bg-parchment", strip: "bg-hairline", ink: "text-ink", cta: "Start free" },
-  { plan: "pro", h: "md:h-[480px]", bg: "bg-primary", strip: "bg-[#0058b0]", ink: "text-white", cta: "Start free, then switch to Pro" },
-  { plan: "business", h: "md:h-[600px]", bg: "bg-ink", strip: "bg-black", ink: "text-white", cta: "Start free, then switch to Business" },
+const i = (n: number) => ({ "--i": n }) as CSSProperties;
+
+const PLANS: { plan: Plan; line: string; lead?: boolean }[] = [
+  { plan: "free", line: "One widget and one person answering. Enough to see it work on your shop." },
+  { plan: "pro", line: "For a shop with a small team and live order lookups.", lead: true },
+  { plan: "business", line: "Several brands or sites, and a full support team." },
 ];
 
-const WORDMARK = "BizzAssist".split("");
-const BLOCK_H = [100, 78, 88, 64, 92, 70, 84, 60, 96, 74];
+const ROWS: { key: keyof (typeof PLAN_LIMITS)["free"]; label: string }[] = [
+  { key: "aiReplies", label: "AI replies a month" },
+  { key: "widgets", label: "Widgets" },
+  { key: "agents", label: "People answering" },
+  { key: "qa", label: "Q&A answers" },
+  { key: "pages", label: "Website pages" },
+  { key: "actions", label: "Order lookups" },
+];
 
 export default function Home() {
   return (
-    <div className="bg-canvas text-ink">
-      {/* ---------- hero ---------- */}
-      <section className="relative overflow-hidden md:min-h-[max(100svh,760px)]">
-        <nav className="relative z-10 flex items-center justify-between px-6 pt-5 md:px-10 md:pt-7" aria-label="Main">
-          <Link href="/" className="text-[19px] font-semibold tracking-[-0.02em]">
-            BizzAssist
+    <div className="paper min-h-dvh">
+      {/* ---------- navigation ---------- */}
+      <header className="mx-auto flex h-16 max-w-[1240px] items-center justify-between px-6 md:h-20 md:px-10">
+        <Wordmark className="text-paper-ink" />
+        <nav aria-label="Main" className="flex items-center gap-1 text-[14px]">
+          <a href="#how" className="hidden rounded-md px-3 py-2 text-paper-ink-2 hover:text-paper-ink md:block">
+            How it works
+          </a>
+          <a href="#plans" className="hidden rounded-md px-3 py-2 text-paper-ink-2 hover:text-paper-ink md:block">
+            Plans
+          </a>
+          <Link href="/login" className="rounded-md px-3 py-2 text-paper-ink-2 hover:text-paper-ink">
+            Sign in
           </Link>
-          <ul className="flex items-center gap-5 text-[15px] md:gap-8">
-            <li className="hidden md:block">
-              <a href="#how" className="text-ink-80 hover:text-ink">How it works</a>
-            </li>
-            <li className="hidden md:block">
-              <a href="#app" className="text-ink-80 hover:text-ink">Agent app</a>
-            </li>
-            <li className="hidden md:block">
-              <a href="#plans" className="text-ink-80 hover:text-ink">Plans</a>
-            </li>
-            <li>
-              <Link href="/login" className="flex min-h-11 items-center text-primary hover:underline">Sign in</Link>
-            </li>
-          </ul>
+          <Link href="/signup" className="press ml-1 inline-flex h-9 items-center rounded-md bg-paper-ink px-4 font-medium text-paper hover:bg-black">
+            Start free
+          </Link>
         </nav>
+      </header>
 
-        <div className="relative z-10 px-6 pt-12 md:px-10 md:pt-[110px]">
-          <h1 className="text-[10vw] font-semibold leading-[1.02] tracking-[-0.03em] md:text-[clamp(52px,5.2vw,80px)]">
+      {/* ---------- hero: the claim, and the product doing it ---------- */}
+      <section className="mx-auto grid max-w-[1240px] items-center gap-16 px-6 pt-10 pb-28 md:px-10 lg:min-h-[calc(100svh-80px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] lg:pt-0 lg:pb-16">
+        <div className="route-in">
+          <p className="t-mono flex items-center gap-2 text-paper-ink-2">
+            <span className="slip text-primary">S1</span>
+            Support chat for online shops
+          </p>
+          <h1 className="t-hero mt-6 text-paper-ink">
             Support that
             <br />
             learns your shop
           </h1>
-          <p className="mt-8 max-w-[40ch] text-[16px] leading-normal text-ink md:mt-10 md:max-w-[34ch] md:text-[18px]">
-            BizzAssist answers your customers from your website, documents and Q&amp;A, in their language. Hard chats go to your team, and every reply they write teaches the bot.
+          <p className="mt-6 max-w-[34rem] text-[18px] leading-[1.6] text-paper-ink-2">
+            It answers your customers from your website, policies and order data. When it can&apos;t help, it hands the chat to your team, and every answer they give becomes
+            something it knows.
           </p>
-          <Link href="/signup" className="press mt-8 inline-flex min-h-11 items-center rounded-full bg-primary px-[22px] text-[17px] font-semibold text-white hover:bg-primary-focus">
-            Start free
-          </Link>
+          <div className="mt-9 flex flex-wrap items-center gap-3">
+            <Link href="/signup" className="press inline-flex h-12 items-center gap-2 rounded-[10px] bg-primary px-5 text-[15px] font-medium text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.14)] hover:bg-primary-focus">
+              Start free <ArrowRight size={16} aria-hidden />
+            </Link>
+            <a href="#how" className="press inline-flex h-12 items-center rounded-[10px] px-5 text-[15px] text-paper-ink hover:bg-paper-raised">
+              See how it learns
+            </a>
+          </div>
+          <p className="t-fine mt-5 text-paper-ink-2">Free plan, no card. Set up in the time it takes to paste your website address.</p>
         </div>
+        <div className="pb-8 lg:pb-0">
+          <HeroChat />
+        </div>
+      </section>
 
-        {/* stage: flat accent field, its top-left corner is the source chip's round end */}
-        <div className="shutter relative mt-12 ml-0 h-[560px] overflow-hidden rounded-tl-[72px] bg-primary md:absolute md:bottom-0 md:left-[36%] md:right-0 md:top-[42%] md:mt-0 md:h-auto md:rounded-tl-[220px]">
-          <div className="settle absolute left-4 top-10 w-[620px] md:left-[160px] md:top-14">
-            <div data-ui className="rounded-[18px] bg-canvas">
-              <div className="flex items-center gap-3 px-4 py-3">
-                <span className="size-8 rounded-full bg-primary" aria-hidden />
-                <div>
-                  <p className="text-[15px] font-semibold">Lumen &amp; Loom</p>
-                  <p className="text-[13px] text-ink-48">Replies in seconds</p>
-                </div>
-              </div>
-              <div className="flex flex-col gap-2.5 bg-pearl px-4 py-4" lang="hi">
-                <div className="flex justify-end">
-                  <p className="max-w-[78%] rounded-[18px] rounded-br-md bg-primary px-3.5 py-2 text-[15px] text-white">मेरा ऑर्डर भारत कब तक पहुँचेगा?</p>
-                </div>
-                <div className="flex max-w-[82%] flex-col gap-1.5">
-                  <p className="rounded-[18px] rounded-bl-md bg-parchment px-3.5 py-2 text-[15px]">हम 1–2 कार्यदिवस में भेजते हैं, और भारत में डिलीवरी 5–8 दिन में होती है।</p>
-                  <span lang="en">
-                    <SourceChip n={1} label="Delivery times" />
-                  </span>
-                </div>
-                <div className="flex justify-end">
-                  <p className="max-w-[78%] rounded-[18px] rounded-br-md bg-primary px-3.5 py-2 text-[15px] text-white">मुझे पता बदलना है, ऑर्डर LL-1002</p>
-                </div>
-                <p className="max-w-[82%] rounded-[18px] rounded-bl-md bg-parchment px-3.5 py-2 text-[15px]">मैं आपको हमारी टीम से जोड़ रहा हूँ। आप अगले नंबर पर हैं।</p>
-                <p lang="en" className="self-center rounded-full bg-ink px-3 py-1 text-[13px] text-white">
-                  Handed to a person · you&apos;re next in line
-                </p>
-              </div>
-              <div className="flex items-center gap-2 px-4 py-3">
-                <span className="flex-1 rounded-full bg-parchment px-4 py-2 text-[15px] text-ink-48">Write a message</span>
-                <span className="rounded-full bg-primary px-4 py-2 text-[15px] font-semibold text-white">Send</span>
-              </div>
+      {/* ---------- 1. teach ---------- */}
+      <section className="border-t border-paper-ink/10 bg-paper-raised/40">
+        <div className="mx-auto max-w-[1240px] px-6 py-24 md:px-10 md:py-32">
+          <div className="rise max-w-[40rem]" style={i(0)}>
+            <p className="t-mono text-paper-ink-2">01 · Teach it</p>
+            <h2 className="t-display mt-3 text-paper-ink">It only says what your shop has told it</h2>
+            <p className="mt-4 text-[17px] leading-relaxed text-paper-ink-2">
+              Every answer cites its source. When nothing it was taught covers the question, it says so instead of guessing, and offers a person.
+            </p>
+          </div>
+          <div className="rise mt-14" style={i(1)}>
+            <SourcesFragment />
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- 2. hand over ---------- */}
+      <section className="border-t border-paper-ink/10">
+        <div className="mx-auto grid max-w-[1240px] items-center gap-14 px-6 py-24 md:px-10 md:py-32 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)]">
+          <div className="rise order-2 lg:order-1" style={i(1)}>
+            <InboxFragment />
+          </div>
+          <div className="rise order-1 lg:order-2" style={i(0)}>
+            <p className="t-mono text-paper-ink-2">02 · Hand over</p>
+            <h2 className="t-display mt-3 text-paper-ink">Hard chats go to a person, already explained</h2>
+            <p className="mt-4 text-[17px] leading-relaxed text-paper-ink-2">
+              Your team sees the issue, what the assistant tried and the customer&apos;s details before they say hello. They answer from the web inbox or the Android app, each side
+              in their own language.
+            </p>
+            <div className="mt-10 hidden sm:block">
+              <PhoneFragment />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ---------- five training sources ---------- */}
-      <section className="bg-tile-1 pt-[120px] md:pt-[200px]" aria-labelledby="sources-heading">
-        <div className="rise mb-12 px-6 md:mb-16 md:px-10">
-          <h2 id="sources-heading" className="text-[9vw] font-semibold leading-[1.05] tracking-[-0.03em] text-white md:text-[clamp(40px,4vw,64px)]">
-            Five ways to teach it
-          </h2>
-          <p className="mt-6 max-w-[48ch] text-[16px] text-white md:text-[18px]">Switch each one on to see what it does. The bot only answers from what you give it, and shows the source.</p>
+      {/* ---------- 3. learn: the live thing ---------- */}
+      <section id="how" className="scroll-mt-8 border-t border-paper-ink/10 bg-paper-raised/40">
+        <div className="mx-auto max-w-[1240px] px-6 py-24 md:px-10 md:py-32">
+          <div className="rise max-w-[40rem]" style={i(0)}>
+            <p className="t-mono text-paper-ink-2">03 · Learn</p>
+            <h2 className="t-display mt-3 text-paper-ink">Answered once, answered from then on</h2>
+            <p className="mt-4 text-[17px] leading-relaxed text-paper-ink-2">Drag through one question&apos;s life. Nothing reaches customers until you approve it.</p>
+          </div>
+          <div className="rise mt-14" style={i(1)}>
+            <LoopSlider />
+          </div>
         </div>
-        <SourceBands />
-      </section>
-
-      {/* ---------- agent app ---------- */}
-      <section id="app" className="scroll-mt-6 bg-parchment px-6 py-[120px] md:px-10 md:py-[200px]" aria-labelledby="app-heading">
-        <div className="rise">
-          <AgentAppShowcase />
-        </div>
-      </section>
-
-      {/* ---------- how it works (the learning loop) ---------- */}
-      <section id="how" className="scroll-mt-6" aria-labelledby="how-heading">
-        <StageSlider />
       </section>
 
       {/* ---------- plans ---------- */}
-      <section id="plans" className="scroll-mt-6 px-6 py-[120px] md:px-10 md:py-[200px]" aria-labelledby="plans-heading">
-        <div className="relative grid gap-2 md:min-h-[760px] md:grid-cols-3 md:items-end">
-          <div className="rise mb-8 md:absolute md:left-0 md:top-0 md:mb-0 md:w-[62%]">
-            <h2 id="plans-heading" className="text-[9vw] font-semibold leading-[1.05] tracking-[-0.03em] md:text-[4vw]">
-              Plans that grow with you
-            </h2>
-            <p className="mt-4 max-w-[44ch] text-[16px] md:text-[18px]">Start on Free. In this demo you can switch plans from the dashboard at any time, and nothing is charged.</p>
+      <section id="plans" className="scroll-mt-8 border-t border-paper-ink/10">
+        <div className="mx-auto max-w-[1240px] px-6 py-24 md:px-10 md:py-32">
+          <div className="rise flex flex-wrap items-end justify-between gap-6" style={i(0)}>
+            <div className="max-w-[36rem]">
+              <p className="t-mono text-paper-ink-2">Plans</p>
+              <h2 className="t-display mt-3 text-paper-ink">Start free. Grow when the chats do</h2>
+            </div>
+            <p className="max-w-[22rem] text-[14px] text-paper-ink-2">Every plan has the same assistant, handover, translation and learning. Plans differ in volume.</p>
           </div>
-          {PLANS.map(({ plan, h, bg, strip, ink, cta }, i) => {
-            const l = PLAN_LIMITS[plan];
-            return (
-              <div key={plan} style={{ "--i": i } as CSSProperties} className={`rise flex flex-col overflow-hidden rounded-t-[48px] rounded-b-[18px] ${bg} ${ink} ${h}`}>
-                <div className="flex-1 p-7">
-                  <h3 className="text-[28px] font-bold">{PLAN_LABEL[plan]}</h3>
-                  <p className="mt-2 text-[44px] font-semibold leading-none tracking-[-0.02em] tabular-nums md:text-[56px]">{fmt(l.aiReplies)}</p>
-                  <p className="mt-1 text-[17px]">AI replies a month</p>
-                  <ul className="mt-6 flex flex-col gap-1.5 text-[17px]">
-                    <li>{fmt(l.widgets)} {l.widgets === 1 ? "chat widget" : "chat widgets"}</li>
-                    <li>{fmt(l.agents)} {l.agents === 1 ? "agent seat" : "agent seats"}</li>
-                    <li>{fmt(l.qa)} Q&amp;A answers</li>
-                    {plan !== "free" && <li>{fmt(l.pages)} website pages</li>}
-                    {plan === "business" && <li>{fmt(l.actions)} API actions</li>}
-                  </ul>
+          <div className="rise mt-12 grid gap-4 md:grid-cols-3" style={i(1)}>
+            {PLANS.map(({ plan, line, lead }) => (
+              <div
+                key={plan}
+                className={
+                  lead
+                    ? "flex flex-col rounded-[16px] bg-paper-ink p-6 text-paper shadow-[var(--shadow-product)]"
+                    : "flex flex-col rounded-[16px] border border-paper-ink/10 bg-white/70 p-6 text-paper-ink"
+                }
+              >
+                <div className="flex items-center justify-between">
+                  <h3 className="text-[18px] font-medium">{PLAN_LABEL[plan]}</h3>
+                  {lead && <span className="slip text-primary-on-dark">Most shops</span>}
                 </div>
-                <Link href="/signup" className={`press flex min-h-16 items-center px-7 text-[17px] font-semibold hover:opacity-90 ${strip}`}>
-                  {cta}
+                <p className={lead ? "mt-2 min-h-[44px] text-[14px] text-paper/70" : "mt-2 min-h-[44px] text-[14px] text-paper-ink-2"}>{line}</p>
+                <p className="t-figure mt-8">{fmt(PLAN_LIMITS[plan].aiReplies)}</p>
+                <p className={lead ? "mt-1 text-[13px] text-paper/70" : "mt-1 text-[13px] text-paper-ink-2"}>AI replies a month</p>
+                <dl className={lead ? "mt-6 divide-y divide-paper/10 border-t border-paper/10" : "mt-6 divide-y divide-paper-ink/10 border-t border-paper-ink/10"}>
+                  {ROWS.slice(1).map((r) => (
+                    <div key={r.key} className="flex h-10 items-center justify-between text-[14px]">
+                      <dt className={lead ? "text-paper/70" : "text-paper-ink-2"}>{r.label}</dt>
+                      <dd className="t-mono text-[13px]">{fmt(PLAN_LIMITS[plan][r.key])}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <Link
+                  href="/signup"
+                  className={
+                    lead
+                      ? "press mt-8 inline-flex h-11 items-center justify-center rounded-[10px] bg-primary text-[14px] font-medium text-white hover:bg-primary-focus"
+                      : "press mt-8 inline-flex h-11 items-center justify-center rounded-[10px] border border-paper-ink/15 bg-white text-[14px] font-medium text-paper-ink hover:bg-paper"
+                  }
+                >
+                  Start free
                 </Link>
               </div>
-            );
-          })}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ---------- close: the sentence with a blank ---------- */}
-      <section className="bg-parchment px-6 py-[120px] md:px-10 md:py-[200px]" aria-labelledby="cta-heading">
-        <form action="/signup" method="get" className="rise">
-          <h2 id="cta-heading" className="text-[9vw] font-semibold leading-[1.15] tracking-[-0.03em] md:text-[clamp(40px,4.4vw,68px)]">
-            Start free with{" "}
-            <label className="sr-only" htmlFor="cta-email">
-              Your email
+      {/* ---------- close ---------- */}
+      <section className="border-t border-paper-ink/10 bg-paper-ink text-paper">
+        <div className="mx-auto grid max-w-[1240px] gap-10 px-6 py-24 md:px-10 md:py-28 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.9fr)] lg:items-end">
+          <h2 className="font-serif text-[44px] leading-[1.04] tracking-[-0.02em] md:text-[56px]">
+            Paste your website.
+            <br />
+            <span className="text-paper/60">Answer your first customer today.</span>
+          </h2>
+          <form action="/signup" method="get" className="flex flex-col gap-3 sm:flex-row">
+            <label htmlFor="cta-email" className="sr-only">
+              Work email
             </label>
             <input
               id="cta-email"
               name="email"
               type="email"
+              required
               autoComplete="email"
-              placeholder="you@shop.com"
-              className="my-2 block h-[1.15em] w-full rounded-full bg-canvas px-[0.4em] align-baseline text-ink placeholder:text-ink-48 md:my-0 md:inline-block md:w-[7.5em]"
-            />{" "}
-            <button type="submit" className="press inline-block h-[1.15em] rounded-full bg-primary px-[0.4em] align-baseline text-white hover:bg-primary-focus">
-              today
+              placeholder="you@yourshop.com"
+              className="h-12 flex-1 rounded-[10px] border border-paper/15 bg-white/5 px-4 text-[15px] text-paper placeholder:text-paper/40 focus:border-primary-on-dark focus:outline-none"
+            />
+            <button type="submit" className="press h-12 rounded-[10px] bg-paper px-5 text-[15px] font-medium text-paper-ink hover:bg-white">
+              Start free
             </button>
-          </h2>
-          <p className="mt-8 max-w-[52ch] text-[16px] text-ink">Opens sign-up with your email filled in. The Free plan needs no card.</p>
-        </form>
+          </form>
+        </div>
+        <footer className="mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-t border-paper/10 px-6 py-8 text-[13px] text-paper/60 md:px-10">
+          <span className="flex items-center gap-2 text-paper">
+            <Mark size={18} className="text-paper [--mark-cut:var(--paper-ink)]" />
+            BizzAssist
+          </span>
+          <span>Built on Nexconn for the Nexconn Build Challenge 2026</span>
+          <span className="flex gap-4">
+            <Link href="/login" className="hover:text-paper">
+              Sign in
+            </Link>
+            <Link href="/signup" className="hover:text-paper">
+              Create an account
+            </Link>
+          </span>
+        </footer>
       </section>
-
-      {/* ---------- footer: the name, built from chip-ended blocks ---------- */}
-      <footer className="bg-tile-1 px-6 pb-8 pt-[120px] text-white md:px-10">
-        <div className="flex h-[22svh] items-end gap-1 md:h-[34svh]" aria-label="BizzAssist" role="img">
-          {WORDMARK.map((ch, i) => (
-            <span
-              key={i}
-              aria-hidden
-              className="flex flex-1 items-end justify-center rounded-t-full pb-[1vw] text-[6vw] font-bold leading-none text-tile-1"
-              style={{ height: `${BLOCK_H[i]}%`, background: i < 4 ? "var(--primary-on-dark)" : "var(--canvas)" }}
-            >
-              {ch}
-            </span>
-          ))}
-        </div>
-        <div className="mt-14 grid gap-8 text-[15px] md:grid-cols-12">
-          <ul className="flex flex-col gap-2 md:col-span-2">
-            <li><a href="#how" className="text-white/80 hover:text-white">How it works</a></li>
-            <li><a href="#app" className="text-white/80 hover:text-white">Agent app</a></li>
-            <li><a href="#plans" className="text-white/80 hover:text-white">Plans</a></li>
-          </ul>
-          <ul className="flex flex-col gap-2 md:col-span-2">
-            <li><Link href="/signup" className="text-white/80 hover:text-white">Create account</Link></li>
-            <li><Link href="/login" className="text-white/80 hover:text-white">Sign in</Link></li>
-          </ul>
-          <p className="text-white/80 md:col-span-4 md:col-start-9">
-            Built on Nexconn Chat for the Nexconn Build Challenge 2026, Marketplace &amp; Support track.
-          </p>
-        </div>
-        <div className="mt-14 flex items-center justify-between gap-4 text-[13px] text-white/70">
-          <span>© 2026 BizzAssist</span>
-          <Link href="/signup" className="press inline-flex min-h-11 items-center rounded-full bg-white px-4 text-[15px] font-semibold text-ink">
-            Start free
-          </Link>
-        </div>
-      </footer>
     </div>
   );
 }

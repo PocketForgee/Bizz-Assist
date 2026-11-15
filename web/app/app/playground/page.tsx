@@ -14,7 +14,7 @@ export default async function PlaygroundPage() {
   if (!widgets.length) {
     return (
       <>
-        <SubNav title="Playground" />
+        <SubNav title="Playground" lead="Ask the assistant anything before your customers do" />
         <Card>
           <EmptyState line="Create a widget first, then test its bot here." action={<ButtonLink href="/app/widgets">Create a widget</ButtonLink>} />
         </Card>

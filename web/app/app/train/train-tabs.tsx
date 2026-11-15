@@ -34,7 +34,7 @@ export function TrainTabs(props: {
 
   return (
     <>
-      <SubNav title="Train" />
+      <SubNav title="Train" lead="Everything the assistant answers from" />
       <div className="mb-6 overflow-x-auto">
         <Segmented<TrainTab>
           label="Training sources"

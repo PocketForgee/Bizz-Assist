@@ -193,7 +193,7 @@ function ActionSheet({ value, onClose, onSaved }: { value: Draft; onClose: () =>
           <div className="flex items-end gap-3">
             <Field label="Method" className="w-28">
               {(p) => (
-                <select {...p} value={d.method} onChange={(e) => set("method", e.target.value as "GET" | "POST")} className="min-h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-[17px]">
+                <select {...p} value={d.method} onChange={(e) => set("method", e.target.value as "GET" | "POST")} className="min-h-11 w-full rounded-md border border-hairline bg-canvas px-3 text-[15px]">
                   <option>GET</option>
                   <option>POST</option>
                 </select>
