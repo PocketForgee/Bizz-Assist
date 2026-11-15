@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Sign in" };
 
 export default async function LoginPage() {
   const user = await getSessionUser();
-  if (user) redirect(user.onboarded ? (user.role === "owner" ? "/app" : "/app/inbox") : "/onboarding");
+  if (user) redirect(user.onboarded ? (user.role === "owner" ? "/app" : "/agent") : "/onboarding");
   return (
     <AuthShell title="Sign in" lead="Owners and agents use the same sign-in.">
       <AuthForm mode="login" />

@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { Message } from "@nexconn/chat";
 import { api } from "@/lib/client";
 import type { PublicWidget } from "@/lib/widgets";
-import { ChatView, type ChatMessage } from "@/components/chat-view";
+import { ChatView, onAccent, type ChatMessage } from "@/components/chat-view";
 import { cn } from "@/components/ui";
 
 type Session = {
@@ -204,6 +204,14 @@ export function BuyerChat({ widget, embed }: { widget: PublicWidget; embed: bool
     }
   }
 
+  // Safety net: status changes normally arrive with a bot note; poll slowly while a person is involved.
+  const humanPhase = session?.status === "waiting" || session?.status === "agent";
+  useEffect(() => {
+    if (!humanPhase) return;
+    const t = setInterval(refreshStatus, 10_000);
+    return () => clearInterval(t);
+  }, [humanPhase, refreshStatus]);
+
   const closed = session?.status === "closed";
   const view = (
     <ChatView
@@ -222,6 +230,8 @@ export function BuyerChat({ widget, embed }: { widget: PublicWidget; embed: bool
           <p className="t-caption mx-4 mb-2 rounded-md bg-danger/10 px-3 py-2 text-danger" role="alert">
             {error}
           </p>
+        ) : closed && session ? (
+          <RatingBar widgetId={widget.id} guestId={session.guestId} accent={widget.color} />
         ) : null
       }
       onClose={embed ? () => window.parent.postMessage({ type: "bizzassist:close" }, "*") : undefined}
@@ -234,5 +244,58 @@ export function BuyerChat({ widget, embed }: { widget: PublicWidget; embed: bool
     <main className="flex h-dvh justify-center bg-canvas md:bg-parchment md:py-8">
       <div className="h-full w-full md:max-w-[440px]">{view}</div>
     </main>
+  );
+}
+
+/** After close: 1–5 pill chips; the selected one fills with the accent, then "Thanks". */
+function RatingBar({ widgetId, guestId, accent }: { widgetId: string; guestId: string; accent: string }) {
+  const [rating, setRating] = useState<number | null>(null);
+  const [sent, setSent] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function rate(n: number) {
+    setRating(n);
+    setError(null);
+    const res = await api(`/api/w/${widgetId}/rate`, { body: { guestId, rating: n } });
+    if (res.ok || res.status === 409) setSent(true);
+    else setError(res.error);
+  }
+
+  return (
+    <div className="mx-4 mb-2 flex flex-col items-center gap-2 rounded-lg bg-parchment px-4 py-3 text-center">
+      {sent ? (
+        <>
+          <p className="t-caption-strong" role="status">
+            Thanks for your feedback!
+          </p>
+          <button type="button" onClick={() => window.location.reload()} className="t-caption min-h-11 text-primary hover:underline">
+            Start a new chat
+          </button>
+        </>
+      ) : (
+        <>
+          <p className="t-caption-strong" id="rate-label">
+            How did we do?
+          </p>
+          <div role="radiogroup" aria-labelledby="rate-label" className="flex gap-2">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <button
+                key={n}
+                type="button"
+                role="radio"
+                aria-checked={rating === n}
+                aria-label={`${n} out of 5`}
+                onClick={() => rate(n)}
+                className="press flex size-11 items-center justify-center rounded-full border border-hairline bg-canvas t-body-strong"
+                style={rating === n ? { background: accent, color: onAccent(accent), borderColor: accent } : undefined}
+              >
+                {n}
+              </button>
+            ))}
+          </div>
+          {error && <p className="t-fine text-danger">{error}</p>}
+        </>
+      )}
+    </div>
   );
 }

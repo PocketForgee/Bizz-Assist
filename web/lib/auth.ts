@@ -105,6 +105,6 @@ export async function requirePageUser(opts: { allowUnonboarded?: boolean; owner?
   const user = await getSessionUser();
   if (!user) redirect("/login");
   if (!user.onboarded && !opts.allowUnonboarded) redirect("/onboarding");
-  if (opts.owner && user.role !== "owner") redirect("/app/inbox");
+  if (opts.owner && user.role !== "owner") redirect("/agent");
   return user;
 }

@@ -40,6 +40,6 @@ export const POST = handle(async (req: Request) => {
     ok: true,
     token,
     user: publicUser,
-    next: user.onboarded ? (user.role === "owner" ? "/app" : "/app/inbox") : "/onboarding",
+    next: user.onboarded ? (user.role === "owner" ? "/app" : "/agent") : "/onboarding",
   });
 });
