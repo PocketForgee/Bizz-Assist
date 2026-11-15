@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BizzAssist Agent</string>
+    <string name="channel_waiting">Waiting chats</string>
+    <string name="channel_waiting_desc">A customer is waiting for a person.</string>
+</resources>

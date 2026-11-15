@@ -1,0 +1,5 @@
+# Copy to local.properties (git-ignored). Android Studio adds sdk.dir itself.
+# The App Key is public by design; the App Secret never goes in the app.
+bizzassist.apiBaseUrl=https://137-23-61-46.sslip.io/
+bizzassist.nexconnAppKey=
+bizzassist.nexconnArea=SG

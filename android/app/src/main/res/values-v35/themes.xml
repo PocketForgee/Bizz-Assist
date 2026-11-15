@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ChatUI's View-based screens don't apply window insets yet; keep them out of forced edge-to-edge.
+         Our Compose screens call enableEdgeToEdge() themselves. -->
+    <style name="Theme.BizzAssist" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/ink</item>
+        <item name="colorAccent">@color/primary</item>
+        <item name="android:windowBackground">@color/parchment</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>
