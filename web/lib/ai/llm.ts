@@ -7,7 +7,8 @@ let client: GoogleGenAI | null = null;
 function ai(): GoogleGenAI | null {
   const apiKey = process.env.LLM_API_KEY;
   if (!apiKey) return null;
-  client ??= new GoogleGenAI({ apiKey });
+  // SDK 3.x defaults to API v1, where the preview and "-latest" models don't exist (404); they live on v1beta
+  client ??= new GoogleGenAI({ apiKey, apiVersion: process.env.LLM_API_VERSION || "v1beta" });
   return client;
 }
 
