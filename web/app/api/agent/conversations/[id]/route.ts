@@ -18,7 +18,7 @@ export const GET = handle(async (req: Request, ctx: Ctx) => {
   `;
   if (!conversation) throw new HttpError(404, "Unknown conversation.");
   const messages = await sql`
-    select id, sender_role as role, text, sources, created_at from messages
+    select id, sender_role as role, text, translation, sources, created_at from messages
     where conversation_id = ${id} order by created_at limit 500
   `;
   return json({ conversation, messages });

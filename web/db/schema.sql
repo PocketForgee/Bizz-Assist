@@ -148,3 +148,5 @@ create unique index if not exists knowledge_web_url_uidx on knowledge_items(busi
 -- ---- Phase 3 additions (idempotent) ----
 -- when an agent took the chat; claimed_at - waiting_since = buyer wait time (analytics)
 alter table conversations add column if not exists claimed_at timestamptz;
+-- translation of the message for the other side (agent views show it under the original)
+alter table messages add column if not exists translation text;

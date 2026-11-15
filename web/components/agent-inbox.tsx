@@ -1,12 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ArrowLeft, Bell, BellOff } from "lucide-react";
-import type { NCChatUIApplication } from "@nexconn/chatui";
+import { ArrowLeft, ArrowUp, Bell, BellOff } from "lucide-react";
 import { api } from "@/lib/client";
 import type { QueueRow } from "@/lib/conversations";
 import { Button, Chip, Segmented, cn } from "@/components/ui";
-import { openGroup, startChatUI } from "@/components/chatui";
 
 type Tab = "waiting" | "mine" | "closed";
 type Detail = {
@@ -24,10 +22,11 @@ type Detail = {
     assigned_name: string | null;
     widget: string;
   };
-  messages: { id: string; role: "buyer" | "bot" | "agent"; text: string; created_at: string }[];
+  messages: { id: string; role: "buyer" | "bot" | "agent"; text: string; translation: string | null; created_at: string; pending?: boolean }[];
 };
 
 const POLL_MS = 3000;
+const LIVE_MS = 1500; // open chat with you: near-live transcript
 
 function since(iso: string | null, now: number): string {
   if (!iso) return "";
@@ -67,9 +66,10 @@ export function AgentInbox({ me, initialConversation, className }: { me: { id: s
   const [error, setError] = useState<string | null>(null);
   const [now, setNow] = useState(() => Date.now());
   const [alerts, setAlerts] = useState<NotificationPermission | "unsupported">("default");
-  const [chat, setChat] = useState<{ app: NCChatUIApplication | null; error: string | null }>({ app: null, error: null });
+  const [draft, setDraft] = useState("");
+  const [sending, setSending] = useState(false);
   const knownWaiting = useRef<Set<string> | null>(null);
-  const chatHost = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLLIElement>(null);
 
   // ---- queue polling + new-chat alerts ----
   const loadQueue = useCallback(async () => {
@@ -126,43 +126,47 @@ export function AgentInbox({ me, initialConversation, className }: { me: { id: s
     else setError(res.error);
   }, []);
 
-  useEffect(() => {
-    setError(null);
-    if (!selected) return setDetail(null);
-    void loadDetail(selected);
-    const t = setInterval(() => loadDetail(selected), POLL_MS * 2);
-    return () => clearInterval(t);
-  }, [selected, loadDetail]);
-
   const c = detail?.conversation;
   const canChat = Boolean(c && c.status === "agent" && c.assigned_user_id === me.id);
-
-  // ---- ChatUI: start once when the agent first opens a chat they own ----
-  useEffect(() => {
-    if (!canChat || chat.app || chat.error) return;
-    let cancelled = false;
-    startChatUI()
-      .then((app) => {
-        if (cancelled) return;
-        const host = chatHost.current;
-        if (host && !host.firstChild) {
-          const el = document.createElement("nc-channel-detail-provider");
-          el.style.display = "block";
-          el.style.width = "100%";
-          el.style.height = "100%";
-          host.appendChild(el);
-        }
-        setChat({ app, error: null });
-      })
-      .catch((err: Error) => !cancelled && setChat({ app: null, error: err.message }));
-    return () => {
-      cancelled = true;
-    };
-  }, [canChat, chat.app, chat.error]);
+  const live = c?.status === "agent" || c?.status === "waiting" || c?.status === "bot";
 
   useEffect(() => {
-    if (chat.app && canChat && c) void openGroup(chat.app, c.nx_group_id).catch((e) => console.error("[inbox] openChannel failed", e));
-  }, [chat.app, canChat, c?.nx_group_id]); // eslint-disable-line react-hooks/exhaustive-deps
+    setError(null);
+    setDraft("");
+    if (!selected) return setDetail(null);
+    setDetail(null);
+    void loadDetail(selected);
+  }, [selected, loadDetail]);
+
+  useEffect(() => {
+    if (!selected) return;
+    const t = setInterval(() => document.visibilityState === "visible" && loadDetail(selected), live ? LIVE_MS : POLL_MS * 2);
+    return () => clearInterval(t);
+  }, [selected, live, loadDetail]);
+
+  const lastId = detail?.messages.at(-1)?.id;
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: "end", behavior: "smooth" });
+  }, [lastId]);
+
+  async function send(e: React.FormEvent) {
+    e.preventDefault();
+    const text = draft.trim();
+    if (!c || !text || sending) return;
+    setSending(true);
+    setDraft("");
+    const temp = { id: `tmp-${Date.now()}`, role: "agent" as const, text, translation: null, created_at: new Date().toISOString(), pending: true };
+    setDetail((d) => (d ? { ...d, messages: [...d.messages, temp] } : d));
+    const res = await api<{ message: Detail["messages"][number] }>(`/api/agent/conversations/${c.id}/messages`, { body: { text } });
+    setSending(false);
+    if (!res.ok) {
+      setDraft(text);
+      setError(res.error);
+      setDetail((d) => (d ? { ...d, messages: d.messages.filter((m) => m.id !== temp.id) } : d));
+      return;
+    }
+    void loadDetail(c.id);
+  }
 
   async function claim() {
     if (!c) return;
@@ -267,31 +271,51 @@ export function AgentInbox({ me, initialConversation, className }: { me: { id: s
             <ArrowLeft size={16} aria-hidden /> Queue
           </button>
         )}
-        <div ref={chatHost} className={cn("min-h-0 flex-1", !(canChat && chat.app) && "hidden")} />
-        {!(canChat && chat.app) && (
-          <div className="min-h-0 flex-1 overflow-y-auto bg-pearl px-4 py-4">
-            {!detail ? (
-              <p className="t-caption mt-20 text-center text-ink-48">Pick a chat from the queue.</p>
-            ) : (
-              <>
-                {canChat && (
-                  <p className="t-caption mb-3 rounded-md bg-parchment px-3 py-2 text-ink-80" role="status">
-                    {chat.error ? `Live chat unavailable: ${chat.error}` : "Connecting to the live chat…"}
+        <div className="min-h-0 flex-1 overflow-y-auto bg-pearl px-4 py-4">
+          {!detail ? (
+            <p className="t-caption mt-20 text-center text-ink-48">{selected ? "Loading the chat…" : "Pick a chat from the queue."}</p>
+          ) : (
+            <ol className="flex flex-col gap-2">
+              {detail.messages.map((m) => (
+                <li key={m.id} className={cn("bubble-in flex max-w-[80%] flex-col", m.role === "buyer" ? "self-start" : "self-end items-end")}>
+                  <span className="t-fine mb-0.5 text-ink-48">{m.role === "buyer" ? "Customer" : m.role === "bot" ? "Assistant" : "Agent"}</span>
+                  <p dir="auto" className={cn("whitespace-pre-wrap rounded-[18px] px-3.5 py-2 text-[15px]", m.role === "buyer" ? "bg-canvas border border-hairline" : m.role === "bot" ? "bg-parchment" : "bg-primary text-white", m.pending && "opacity-60")}>
+                    {m.text}
                   </p>
-                )}
-                <ol className="flex flex-col gap-2">
-                  {detail.messages.map((m) => (
-                    <li key={m.id} className={cn("flex max-w-[80%] flex-col", m.role === "buyer" ? "self-start" : "self-end items-end")}>
-                      <span className="t-fine mb-0.5 text-ink-48">{m.role === "buyer" ? "Customer" : m.role === "bot" ? "Assistant" : "Agent"}</span>
-                      <p dir="auto" className={cn("whitespace-pre-wrap rounded-[18px] px-3.5 py-2 text-[15px]", m.role === "buyer" ? "bg-canvas border border-hairline" : m.role === "bot" ? "bg-parchment" : "bg-primary text-white")}>
-                        {m.text}
-                      </p>
-                    </li>
-                  ))}
-                </ol>
-              </>
-            )}
-          </div>
+                  {m.translation && (
+                    <p dir="auto" className="t-caption mt-1 max-w-full rounded-md border border-dashed border-hairline px-3 py-1.5 text-ink-80">
+                      <span className="t-fine block text-ink-48">{m.role === "buyer" ? "Translated for you" : "Sent to the customer as"}</span>
+                      {m.translation}
+                    </p>
+                  )}
+                </li>
+              ))}
+              <li ref={endRef} aria-hidden />
+            </ol>
+          )}
+        </div>
+        {canChat && (
+          <form onSubmit={send} className="flex items-end gap-2 border-t border-hairline bg-canvas p-3">
+            <label htmlFor="agent-reply" className="sr-only">Reply</label>
+            <textarea
+              id="agent-reply"
+              rows={1}
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  e.currentTarget.form?.requestSubmit();
+                }
+              }}
+              placeholder="Reply to the customer"
+              maxLength={2000}
+              className="max-h-40 min-h-11 flex-1 resize-none rounded-[22px] border border-hairline bg-canvas px-4 py-2.5 text-[15px] focus:border-primary-focus focus:outline-none"
+            />
+            <button type="submit" disabled={!draft.trim() || sending} aria-label="Send" className="press flex size-11 shrink-0 items-center justify-center rounded-full bg-primary text-white disabled:opacity-40">
+              <ArrowUp size={18} aria-hidden />
+            </button>
+          </form>
         )}
       </section>
 

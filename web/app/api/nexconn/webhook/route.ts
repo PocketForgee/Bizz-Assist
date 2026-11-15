@@ -60,6 +60,6 @@ async function ingest(m: IncomingText) {
   if (role === "buyer" && conv.status === "bot") {
     void enqueue(conv.id, () => answerConversation(conv.id));
   } else if (conv.status === "agent") {
-    await relayTranslation(conv.id, role, m.text);
+    await relayTranslation(conv.id, role, m.text, inserted[0].id);
   }
 }

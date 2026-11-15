@@ -1,4 +1,4 @@
-import { ApiError, GoogleGenAI, type Content, type FunctionCall, type FunctionDeclaration } from "@google/genai";
+import { ApiError, GoogleGenAI, ThinkingLevel, type Content, type FunctionCall, type FunctionDeclaration } from "@google/genai";
 
 export const MODEL_MAIN = () => process.env.LLM_MODEL_MAIN || "";
 export const MODEL_LITE = () => process.env.LLM_MODEL_LITE || "";
@@ -40,6 +40,8 @@ export async function askLLM(opts: {
           systemInstruction: opts.system,
           temperature: opts.temperature ?? 0.2,
           abortSignal: AbortSignal.timeout(30_000),
+          // Newer models think at "high" by default; support replies need speed more than depth
+          ...(/-3-|latest/.test(opts.model) ? { thinkingConfig: { thinkingLevel: ThinkingLevel.LOW } } : {}),
           ...(opts.tools?.length ? { tools: [{ functionDeclarations: opts.tools }] } : {}),
           ...(opts.json ? { responseMimeType: "application/json", responseJsonSchema: opts.json.schema } : {}),
         },

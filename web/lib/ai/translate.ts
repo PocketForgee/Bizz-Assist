@@ -45,9 +45,10 @@ export async function translate(text: string, to: string): Promise<{ source: str
  * Live translation between the buyer and the assigned agent.
  * Buyer messages are always checked (the browser locale is only a guess); the detected language is saved
  * as buyer_lang so agent replies go back in the language the buyer actually writes.
- * The copy goes into the group as the bot, addressed only to the reader (`toUserIds`), and is not stored.
+ * The translation is stored on the message row (the agent views read it from there). Agent replies are also sent
+ * into the group as the bot, addressed only to the buyer (`toUserIds`), so the buyer's live chat shows them.
  */
-export async function relayTranslation(conversationId: string, role: "buyer" | "agent", text: string) {
+export async function relayTranslation(conversationId: string, role: "buyer" | "agent", text: string, messageId: string) {
   const [c] = await sql<{ business_id: string; nx_group_id: string; guest_nx_id: string; buyer_lang: string; agent_nx: string | null; agent_lang: string | null }[]>`
     select c.business_id, c.nx_group_id, c.guest_nx_id, c.buyer_lang, u.nx_user_id as agent_nx, u.lang as agent_lang
     from conversations c left join users u on u.id = c.assigned_user_id
@@ -63,9 +64,10 @@ export async function relayTranslation(conversationId: string, role: "buyer" | "
     await sql`update conversations set buyer_lang = ${out.source} where id = ${conversationId}`;
   }
   if (!out.translation) return;
+  await sql`update messages set translation = ${out.translation} where id = ${messageId}`;
+  if (role === "buyer") return;
   try {
-    const reader = role === "buyer" ? c.agent_nx : c.guest_nx_id;
-    await sendGroupText(nxId.bot(c.business_id), c.nx_group_id, `Translated: ${out.translation}`, [reader]);
+    await sendGroupText(nxId.bot(c.business_id), c.nx_group_id, `Translated: ${out.translation}`, [c.guest_nx_id]);
   } catch (err) {
     console.error("[translate] send failed", err);
   }
