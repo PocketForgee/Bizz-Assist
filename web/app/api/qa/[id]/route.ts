@@ -1,6 +1,6 @@
 import { sql } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { handle, HttpError, json, readJson, requireUuid, str } from "@/lib/http";
+import { handle, HttpError, json, readJson, requireUuid, str, strList } from "@/lib/http";
 import type { QaRow } from "@/lib/qa";
 
 type Ctx = { params: Promise<{ id: string }> };
@@ -11,11 +11,12 @@ export const PATCH = handle(async (req: Request, ctx: Ctx) => {
   const body = await readJson(req);
   const question = str(body, "question", { max: 500, label: "a question" });
   const answer = str(body, "answer", { max: 5000, label: "an answer" });
+  const alternatives = strList(body, "alternatives", { maxItems: 10, maxLen: 300 });
 
   const [item] = await sql<QaRow[]>`
-    update knowledge_items set title = ${question}, content = ${answer}, updated_at = now()
+    update knowledge_items set title = ${question}, content = ${answer}, alternatives = ${alternatives}, updated_at = now()
     where id = ${id} and business_id = ${user.business_id} and source in ('qa', 'learned')
-    returning id, title as question, content as answer, source, updated_at
+    returning id, title as question, content as answer, alternatives, source, updated_at
   `;
   if (!item) throw new HttpError(404, "Unknown entry.");
   return json({ item });
