@@ -6,7 +6,7 @@
 import type { NCChatUIApplication, ServiceHooks } from "@nexconn/chatui";
 import { api } from "@/lib/client";
 
-type Session = { appKey: string; areaCode: number; token: string; userId: string; name: string };
+type Session = { appKey: string; areaCode: import("@nexconn/chat").AreaCode; token: string; userId: string; name: string };
 type Profiles = {
   users: { userId: string; name: string; avatarUrl?: string }[];
   groups: { groupId: string; name: string; memberCount: number }[];

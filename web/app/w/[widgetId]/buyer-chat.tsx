@@ -12,7 +12,7 @@ import { cn } from "@/components/ui";
 
 type Session = {
   appKey: string;
-  areaCode: number;
+  areaCode: import("@nexconn/chat").AreaCode; // numeric code from the server (SG=2, NA=3, SA=5)
   token: string;
   guestId: string;
   groupId: string;
