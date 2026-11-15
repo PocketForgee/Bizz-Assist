@@ -1,0 +1,174 @@
+@import "tailwindcss";
+
+/* Design tokens: DESIGN-apple (3).md (theme) + DESIGN_SPEC.md section 3/4 (motion). Never write raw hex in components. */
+:root {
+  --primary: #0066cc;
+  --primary-focus: #0071e3;
+  --primary-on-dark: #2997ff;
+  --ink: #1d1d1f;
+  --ink-80: #333333;
+  --ink-48: #7a7a7a;
+  --canvas: #ffffff;
+  --parchment: #f5f5f7;
+  --pearl: #fafafc;
+  --tile-1: #272729;
+  --tile-2: #2a2a2c;
+  --tile-3: #252527;
+  --black: #000000;
+  --hairline: #e0e0e0;
+  --divider: #f0f0f0;
+  --chip: rgba(210, 210, 215, 0.64);
+  /* status only, never as an accent */
+  --danger: #d70015;
+  --success: #248a3d;
+  --warning: #b25000;
+
+  --r-sm: 8px;
+  --r-md: 11px;
+  --r-lg: 18px;
+  --r-pill: 9999px;
+  --shadow-product: 3px 5px 30px rgba(0, 0, 0, 0.22);
+  /* functional exception: popovers/menus/dialogs only */
+  --shadow-pop: 0 8px 32px rgba(0, 0, 0, 0.12);
+
+  --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-sheet: cubic-bezier(0.32, 0.72, 0, 1);
+  --d-press: 120ms;
+  --d-hover: 180ms;
+  --d-panel: 240ms;
+  --d-route: 320ms;
+  --d-hero: 700ms;
+
+  /* the business accent replaces --primary inside the buyer chat only */
+  --accent: var(--primary);
+}
+
+@theme inline {
+  --color-primary: var(--primary);
+  --color-primary-focus: var(--primary-focus);
+  --color-primary-on-dark: var(--primary-on-dark);
+  --color-ink: var(--ink);
+  --color-ink-80: var(--ink-80);
+  --color-ink-48: var(--ink-48);
+  --color-canvas: var(--canvas);
+  --color-parchment: var(--parchment);
+  --color-pearl: var(--pearl);
+  --color-tile-1: var(--tile-1);
+  --color-tile-2: var(--tile-2);
+  --color-tile-3: var(--tile-3);
+  --color-hairline: var(--hairline);
+  --color-divider: var(--divider);
+  --color-chip: var(--chip);
+  --color-danger: var(--danger);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-accent: var(--accent);
+
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r-md);
+  --radius-lg: var(--r-lg);
+  --radius-pill: var(--r-pill);
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", var(--font-inter), system-ui, sans-serif;
+  --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", var(--font-inter), system-ui, sans-serif;
+
+  --ease-standard: var(--ease-standard);
+  --ease-sheet: var(--ease-sheet);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.374px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Apple type scale */
+.t-hero { font-family: var(--font-display); font-size: 56px; font-weight: 600; line-height: 1.07; letter-spacing: -0.28px; }
+.t-display { font-family: var(--font-display); font-size: 40px; font-weight: 600; line-height: 1.1; letter-spacing: -0.01em; }
+.t-section { font-size: 34px; font-weight: 600; line-height: 1.2; letter-spacing: -0.374px; }
+.t-lead { font-family: var(--font-display); font-size: 28px; font-weight: 400; line-height: 1.14; letter-spacing: 0.196px; }
+.t-tagline { font-family: var(--font-display); font-size: 21px; font-weight: 600; line-height: 1.19; letter-spacing: 0.231px; }
+.t-body-strong { font-size: 17px; font-weight: 600; line-height: 1.24; letter-spacing: -0.374px; }
+.t-caption { font-size: 14px; font-weight: 400; line-height: 1.43; letter-spacing: -0.224px; }
+.t-caption-strong { font-size: 14px; font-weight: 600; line-height: 1.29; letter-spacing: -0.224px; }
+.t-fine { font-size: 12px; font-weight: 400; line-height: 1.33; letter-spacing: -0.12px; }
+
+@media (max-width: 1068px) { .t-hero { font-size: 40px; } }
+@media (max-width: 640px) { .t-hero { font-size: 34px; } .t-display { font-size: 32px; } }
+@media (max-width: 419px) { .t-hero { font-size: 28px; } }
+
+/* keyboard focus: 2px solid focus blue, always visible */
+:focus-visible {
+  outline: 2px solid var(--primary-focus);
+  outline-offset: 2px;
+}
+
+/* press micro-interaction used by every button */
+.press {
+  transition: transform var(--d-press) var(--ease-standard), background-color var(--d-hover) var(--ease-standard),
+    color var(--d-hover) var(--ease-standard), border-color var(--d-hover) var(--ease-standard);
+}
+.press:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* route content enter: fade + 8px rise, keyed on pathname */
+@keyframes route-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+.route-in {
+  animation: route-in var(--d-route) var(--ease-standard) both;
+}
+
+/* list row insert */
+@keyframes row-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: none; }
+}
+.row-in {
+  animation: row-in var(--d-panel) var(--ease-standard) both;
+}
+
+/* chat bubble enter */
+@keyframes bubble-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.98); }
+  to { opacity: 1; transform: none; }
+}
+.bubble-in {
+  animation: bubble-in var(--d-panel) var(--ease-sheet) both;
+}
+
+/* AI typing dots: 1.2s loop */
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.typing-dot {
+  animation: typing 1.2s var(--ease-standard) infinite;
+}
+.typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* frosted sticky bars */
+.frosted {
+  background: color-mix(in srgb, var(--parchment) 80%, transparent);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0ms !important;
+  }
+}

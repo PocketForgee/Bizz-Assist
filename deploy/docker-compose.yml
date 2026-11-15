@@ -1,0 +1,52 @@
+# BizzAssist on the server. Run from this folder:
+#   cp .env.example .env   # fill it in
+#   docker compose up -d --build
+name: bizzassist
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: bizzassist
+      POSTGRES_USER: bizzassist
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in deploy/.env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bizzassist -d bizzassist"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    # not published: only the web container reaches it
+
+  web:
+    build: ../web
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgres://bizzassist:${POSTGRES_PASSWORD}@db:5432/bizzassist
+      APP_URL: https://${DOMAIN:?set DOMAIN in deploy/.env}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

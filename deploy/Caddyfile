@@ -1,0 +1,5 @@
+# Automatic HTTPS for $DOMAIN (e.g. 137-23-61-46.sslip.io until a real domain exists).
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:3000
+}
