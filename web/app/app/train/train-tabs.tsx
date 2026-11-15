@@ -14,6 +14,7 @@ export type TrainTab = "website" | "documents" | "qa" | "actions" | "learned";
 
 export function TrainTabs(props: {
   tab: TrainTab;
+  ask?: string;
   web: KnowledgeRow[];
   docs: KnowledgeRow[];
   qa: QaRow[];
@@ -56,7 +57,7 @@ export function TrainTabs(props: {
         <DocumentsTab initial={props.docs} />
       </div>
       <div hidden={tab !== "qa"}>
-        <QaTab initial={props.qa} limit={props.limits.qa} />
+        <QaTab initial={props.qa} limit={props.limits.qa} ask={props.ask} />
       </div>
       <div hidden={tab !== "actions"}>
         <ActionsTab initial={props.actions} limit={props.limits.actions} />

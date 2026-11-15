@@ -6,19 +6,9 @@ import { Check, Globe, Loader2 } from "lucide-react";
 import { api } from "@/lib/client";
 import { Button, Field, Input, cn } from "@/components/ui";
 import { Wordmark } from "@/components/auth-shell";
+import { LANGS } from "@/lib/langs";
 
 const STEPS = ["Business", "Website", "Done"] as const;
-
-const LANGS = [
-  { code: "en", label: "English" },
-  { code: "hi", label: "Hindi" },
-  { code: "es", label: "Spanish" },
-  { code: "ar", label: "Arabic" },
-  { code: "fr", label: "French" },
-  { code: "de", label: "German" },
-  { code: "pt", label: "Portuguese" },
-  { code: "id", label: "Indonesian" },
-];
 
 const SWATCHES = ["#0066cc", "#1d1d1f", "#248a3d", "#b25000", "#8e44ad", "#d70015"];
 

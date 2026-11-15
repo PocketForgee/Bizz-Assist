@@ -21,7 +21,7 @@ const FIELDS: Record<Mode, { name: string; label: string; type: string; autoComp
   ],
 };
 
-export function AuthForm({ mode }: { mode: Mode }) {
+export function AuthForm({ mode, defaultEmail }: { mode: Mode; defaultEmail?: string }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<{ field?: string; message: string } | null>(null);
@@ -54,7 +54,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
           error={error?.field === f.name ? error.message : undefined}
           hint={mode === "signup" && f.name === "password" ? "At least 8 characters." : undefined}
         >
-          {(a) => <Input {...a} name={f.name} type={f.type} autoComplete={f.autoComplete} required minLength={f.name === "password" && mode === "signup" ? 8 : undefined} />}
+          {(a) => <Input {...a} name={f.name} type={f.type} autoComplete={f.autoComplete} defaultValue={f.name === "email" ? defaultEmail : undefined} required minLength={f.name === "password" && mode === "signup" ? 8 : undefined} />}
         </Field>
       ))}
       {generalError && (

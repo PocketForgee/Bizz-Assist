@@ -1,0 +1,6 @@
+order_id,email,phone,status,carrier,tracking,expected_delivery,items
+LL-1001,maya@example.com,+15550100,Delivered,UPS,1Z999AA10000000001,2026-11-08,Linen throw (sand)
+LL-1002,arjun@example.com,+919800000002,Shipped,DHL,JD0000000000000002,2026-11-18,2 x Stoneware mug
+LL-1003,lucia@example.com,+34600000003,Processing,,,2026-11-21,Cotton cushion cover (rust)
+LL-1004,sam@example.com,+15550104,Out for delivery,USPS,9400000000000000000004,2026-11-15,Wool blanket (charcoal)
+LL-1005,amira@example.com,+971500000005,Cancelled,,,,Jute rug 120x180

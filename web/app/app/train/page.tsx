@@ -10,9 +10,9 @@ export const metadata: Metadata = { title: "Train" };
 
 const TABS: TrainTab[] = ["website", "documents", "qa", "actions", "learned"];
 
-export default async function TrainPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+export default async function TrainPage({ searchParams }: { searchParams: Promise<{ tab?: string; ask?: string }> }) {
   const user = await requirePageUser({ owner: true });
-  const { tab } = await searchParams;
+  const { tab, ask } = await searchParams;
   const b = user.business_id;
 
   const [web, docs, qa, actions, learned] = await Promise.all([
@@ -32,6 +32,7 @@ export default async function TrainPage({ searchParams }: { searchParams: Promis
   return (
     <TrainTabs
       tab={initialTab}
+      ask={typeof ask === "string" ? ask.slice(0, 500) : undefined}
       web={plain(web)}
       docs={plain(docs)}
       qa={plain(qa)}

@@ -52,9 +52,10 @@ export function QaSheet({ value, onClose, onSaved }: { value: QaDraft; onClose: 
   );
 }
 
-export function QaTab({ initial, limit }: { initial: QaRow[]; limit: number }) {
+/** `ask` (from Analytics → "Add answer") opens the add sheet with that question filled in. */
+export function QaTab({ initial, limit, ask }: { initial: QaRow[]; limit: number; ask?: string }) {
   const [items, setItems] = useState(initial);
-  const [editing, setEditing] = useState<QaDraft | null>(null);
+  const [editing, setEditing] = useState<QaDraft | null>(ask ? { question: ask, answer: "", alternatives: [] } : null);
   const [query, setQuery] = useState("");
   const blank: QaDraft = { question: "", answer: "", alternatives: [] };
 

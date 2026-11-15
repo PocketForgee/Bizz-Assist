@@ -22,6 +22,8 @@ COPY --from=build --chown=app:app /app/.next/static ./.next/static
 COPY --from=build --chown=app:app /app/public ./public
 # schema.sql is read at boot by instrumentation.ts
 COPY --from=build --chown=app:app /app/db ./db
+# demo data: docker compose exec web node scripts/seed.mjs
+COPY --from=build --chown=app:app /app/scripts ./scripts
 USER app
 EXPOSE 3000
 CMD ["node", "server.js"]
