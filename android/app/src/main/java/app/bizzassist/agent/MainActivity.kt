@@ -23,18 +23,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import app.bizzassist.agent.data.Chat
-import app.bizzassist.agent.ui.Bz
 import app.bizzassist.agent.ui.BizzTheme
+import app.bizzassist.agent.ui.Bz
+import app.bizzassist.agent.ui.ChatScreen
 import app.bizzassist.agent.ui.LoginScreen
 import app.bizzassist.agent.ui.QueueScreen
 import app.bizzassist.agent.ui.SettingsScreen
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val vm: AppViewModel by viewModels()
@@ -46,30 +43,40 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+/** Depth of a screen: going deeper slides in from the right, going back slides out to the right. */
+private fun depth(s: Screen) = when (s) {
+    Screen.Loading, Screen.Login -> 0
+    Screen.Queue -> 1
+    is Screen.Chat, Screen.Settings -> 2
+}
+
 @Composable
 private fun App(vm: AppViewModel) {
     val screen by vm.screen.collectAsStateWithLifecycle()
     val session by vm.session.collectAsStateWithLifecycle()
 
-    // Shared-axis style: forward slides in from the right, back slides out to the right (240ms, DESIGN_SPEC 4).
     AnimatedContent(
         targetState = screen,
+        contentKey = { it::class },
         transitionSpec = {
-            val forward = targetState == Screen.Settings
-            (slideInHorizontally(tween(240)) { w -> if (forward) w / 5 else -w / 5 } + fadeIn(tween(240)))
-                .togetherWith(slideOutHorizontally(tween(240)) { w -> if (forward) -w / 5 else w / 5 } + fadeOut(tween(160)))
+            val forward = depth(targetState) >= depth(initialState)
+            val enter = slideInHorizontally(tween(320, easing = Bz.Ease)) { w -> if (forward) w / 4 else -w / 4 } + fadeIn(tween(240))
+            val exit = slideOutHorizontally(tween(320, easing = Bz.Ease)) { w -> if (forward) -w / 6 else w / 4 } + fadeOut(tween(180))
+            enter togetherWith exit
         },
         label = "screen",
-        modifier = Modifier.fillMaxSize().background(Bz.Parchment),
+        modifier = Modifier.fillMaxSize().background(Bz.Pearl),
     ) { s ->
         when (s) {
-            Screen.Loading -> Box(Modifier.fillMaxSize().background(Bz.Parchment))
+            Screen.Loading -> Box(Modifier.fillMaxSize().background(Bz.Pearl))
             Screen.Login -> LoginScreen(onLogin = vm::login)
             Screen.Queue -> QueueRoute(vm, session?.name.orEmpty())
+            is Screen.Chat -> ChatRoute(vm, session?.userId.orEmpty())
             Screen.Settings -> {
-                BackHandler(onBack = vm::back) // predictive back is on (enableOnBackInvokedCallback)
+                BackHandler(onBack = vm::back)
                 SettingsScreen(
                     name = session?.name.orEmpty(),
+                    role = session?.role ?: "agent",
                     lang = session?.lang ?: "en",
                     onBack = vm::back,
                     onLang = vm::setLang,
@@ -83,9 +90,6 @@ private fun App(vm: AppViewModel) {
 @Composable
 private fun QueueRoute(vm: AppViewModel, name: String) {
     val state by vm.queue.collectAsStateWithLifecycle()
-    val chatError by vm.chatError.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
 
     // Android 13+: ask once for permission to alert about new waiting chats.
     val askNotify = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { }
@@ -93,7 +97,7 @@ private fun QueueRoute(vm: AppViewModel, name: String) {
         if (Build.VERSION.SDK_INT >= 33) askNotify.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
 
-    // Poll only while visible; ChatUI's chat screen pauses this activity, so polling stops there too.
+    // poll only while the queue is visible
     LifecycleResumeEffect(Unit) {
         vm.startPolling()
         onPauseOrDispose { vm.stopPolling() }
@@ -102,12 +106,30 @@ private fun QueueRoute(vm: AppViewModel, name: String) {
     QueueScreen(
         state = state,
         agentName = name,
-        chatError = chatError,
         onTab = vm::selectTab,
         onRefresh = { vm.refresh(pull = true) },
-        onClaim = { row -> scope.launch { vm.claim(row)?.let { Chat.open(context, it) } } },
-        onOpen = { row -> Chat.open(context, row.nx_group_id) },
-        onResolve = vm::resolve,
+        onOpen = { row -> vm.openChat(row.id) },
         onSettings = vm::openSettings,
     )
+}
+
+@Composable
+private fun ChatRoute(vm: AppViewModel, myUserId: String) {
+    val state by vm.chat.collectAsStateWithLifecycle()
+    BackHandler(onBack = vm::back)
+    LifecycleResumeEffect(Unit) {
+        vm.startChatPolling()
+        onPauseOrDispose { vm.stopChatPolling() }
+    }
+    state?.let {
+        ChatScreen(
+            state = it,
+            myUserId = myUserId,
+            onBack = vm::back,
+            onClaim = { vm.claim(it.id) },
+            onResolve = { vm.resolve(it.id) },
+            onSend = vm::send,
+            onDismissError = vm::dismissChatError,
+        )
+    }
 }

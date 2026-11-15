@@ -10,7 +10,6 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven { url = uri("https://maven.nexconn.ai/repository/maven-releases/") }
     }
 }
 rootProject.name = "BizzAssistAgent"

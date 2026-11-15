@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- AppCompat parent: Nexconn ChatUI's ChannelActivity extends AppCompatActivity and uses the app theme. -->
-    <style name="Theme.BizzAssist" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryDark">@color/ink</item>
-        <item name="colorAccent">@color/primary</item>
-        <item name="android:windowBackground">@color/parchment</item>
+    <!-- Compose draws everything; the window theme only sets the launch background and light system bars. -->
+    <style name="Theme.BizzAssist" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/pearl</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorAccent">@color/primary</item>
     </style>
 </resources>
