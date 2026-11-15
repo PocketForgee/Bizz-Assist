@@ -8,7 +8,7 @@ export const metadata: Metadata = { title: "Analytics" };
 
 // Chart colours, checked with the dataviz palette validator (light surface, CVD-safe pair).
 const AI = "var(--primary)"; // the one accent: what the assistant solved
-const HUMAN = "#8e8e93"; // neutral step: handed to a person
+const HUMAN = "var(--sienna)"; // the second series: handed to a person
 
 const REASON: Record<string, string> = {
   no_info: "Knowledge didn't cover it",
@@ -150,7 +150,7 @@ export default async function AnalyticsPage() {
             </div>
             <details className="mt-3">
               <summary className="t-caption cursor-pointer text-primary">Show as table</summary>
-              <table className="t-caption mt-2 w-full text-left tabular-nums">
+              <div className="mt-2 overflow-x-auto"><table className="t-caption w-full min-w-[420px] text-left tabular-nums">
                 <thead className="text-ink-48">
                   <tr>
                     <th className="py-1 font-normal">Day</th>
@@ -169,7 +169,7 @@ export default async function AnalyticsPage() {
                     </tr>
                   ))}
                 </tbody>
-              </table>
+              </table></div>
             </details>
           </>
         )}

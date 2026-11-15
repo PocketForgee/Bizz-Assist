@@ -19,7 +19,7 @@ export function HeroChat() {
     <div className="relative mx-auto w-full max-w-[460px]">
       <div className="overflow-hidden rounded-[22px] border border-paper-ink/10 bg-white shadow-[var(--shadow-product)]">
         <div className="flex h-16 items-center gap-3 border-b border-black/[0.06] px-4">
-          <span className="relative flex size-10 items-center justify-center rounded-full bg-[#7a4b2a] text-[15px] font-medium text-white">
+          <span className="relative flex size-10 items-center justify-center rounded-full bg-sienna-ink text-[15px] font-medium text-white">
             L<span className="absolute -right-0.5 -bottom-0.5 size-3 rounded-full border-2 border-white bg-success" />
           </span>
           <div className="min-w-0 flex-1">
@@ -28,7 +28,7 @@ export function HeroChat() {
           </div>
         </div>
         <div className="play flex flex-col gap-1 bg-pearl px-4 py-5 text-[14px] leading-[1.45]">
-          <p style={t(300)} className="max-w-[80%] self-end rounded-[16px] rounded-tr-[4px] bg-[#7a4b2a] px-3.5 py-2 text-white">
+          <p style={t(300)} className="max-w-[80%] self-end rounded-[16px] rounded-tr-[4px] bg-sienna-ink px-3.5 py-2 text-white">
             Where is my order LL-1002? It&apos;s arjun@example.com
           </p>
           <div style={t(1100)} className="mt-3 flex max-w-[86%] flex-col items-start gap-1.5 self-start">
@@ -40,7 +40,7 @@ export function HeroChat() {
               <Slip>S2 Shipping policy</Slip>
             </span>
           </div>
-          <p style={t(2300)} className="mt-3 max-w-[80%] self-end rounded-[16px] rounded-tr-[4px] bg-[#7a4b2a] px-3.5 py-2 text-white">
+          <p style={t(2300)} className="mt-3 max-w-[80%] self-end rounded-[16px] rounded-tr-[4px] bg-sienna-ink px-3.5 py-2 text-white">
             Can I return a cushion cover I&apos;ve used?
           </p>
           <div style={t(3200)} className="my-3 flex items-center gap-2 self-center text-[12px] text-ink-48">
@@ -56,11 +56,11 @@ export function HeroChat() {
       </div>
 
       {/* the learned slip: the moment the page is about */}
-      <div style={t(5200)} className="play absolute -bottom-10 -left-4 w-[260px] sm:-left-16">
-        <div className="rotate-[-2deg] rounded-[12px] border border-dashed border-paper-ink/30 bg-paper p-3.5 shadow-[0_12px_24px_-12px_rgb(31_27_22/0.35)]">
+      <div style={t(5200)} className="play absolute -bottom-10 left-0 w-[min(260px,85%)] sm:-left-16">
+        <div className="rotate-[-2deg] rounded-[12px] border border-dashed border-paper-ink/35 bg-saffron p-3.5 shadow-[0_12px_24px_-12px_rgb(38_70_83/0.4)]">
           <div className="flex items-center justify-between text-[12px] text-paper-ink-2">
-            <span>Learned from Priya</span>
-            <Slip className="text-primary">Q&amp;A 08</Slip>
+            <span className="text-paper-ink">Learned from Priya</span>
+            <Slip className="text-paper-ink">Q&amp;A 08</Slip>
           </div>
           <p className="mt-1.5 text-[13px] leading-snug text-paper-ink">Used items can be returned within 30 days when faulty, with a photo.</p>
         </div>
@@ -93,7 +93,7 @@ export function SourcesFragment() {
               onMouseEnter={() => setOn(i)}
               className={cn(
                 "press flex w-full items-start gap-3 rounded-[12px] px-4 py-3.5 text-left",
-                on === i ? "bg-white shadow-[0_1px_2px_rgb(0_0_0/0.05),0_0_0_1px_rgb(31_27_22/0.08)]" : "hover:bg-paper-raised/60",
+                on === i ? "bg-white shadow-[0_1px_2px_rgb(38_70_83/0.05),0_0_0_1px_rgb(31_27_22/0.08)]" : "hover:bg-paper-raised/60",
               )}
             >
               <s.icon size={18} strokeWidth={1.5} className={cn("mt-0.5 shrink-0", on === i ? "text-primary" : "text-paper-ink-2")} aria-hidden />
@@ -134,16 +134,16 @@ export function InboxFragment() {
       <div className="grid sm:grid-cols-[220px_minmax(0,1fr)]">
         <div className="border-b border-black/[0.06] bg-pearl p-2 sm:border-r sm:border-b-0">
           <div className="mb-2 flex gap-1 rounded-[8px] bg-black/[0.04] p-0.5 text-[12px] font-medium">
-            <span className="flex-1 rounded-[6px] bg-white py-1 text-center shadow-[0_1px_2px_rgb(0_0_0/0.08)]">Waiting 2</span>
+            <span className="flex-1 rounded-[6px] bg-white py-1 text-center shadow-[0_1px_2px_rgb(38_70_83/0.08)]">Waiting 2</span>
             <span className="flex-1 py-1 text-center text-ink-48">Mine</span>
           </div>
           {[
             { n: "Customer 7F2A", w: "1m 12s", l: "ES", x: "Return of a used cushion cover" },
             { n: "Customer 03BD", w: "0m 31s", l: "HI", x: "Wants a bulk order invoice" },
           ].map((r, i) => (
-            <div key={r.n} className={cn("rounded-[8px] px-3 py-2.5", i === 0 && "bg-white shadow-[0_0_0_1px_rgb(0_0_0/0.06)]")}>
+            <div key={r.n} className={cn("rounded-[8px] px-3 py-2.5", i === 0 && "bg-white shadow-[0_0_0_1px_rgb(38_70_83/0.06)]")}>
               <p className="flex items-center gap-2 text-[13px] font-medium text-ink">
-                <span className="live-dot text-warning" />
+                <span className="live-dot text-sand" />
                 <span className="flex-1">{r.n}</span>
                 <span className="t-mono text-warning">{r.w}</span>
               </p>
@@ -252,7 +252,7 @@ export function LoopSlider() {
 /** The Android agent app, as a phone-width fragment. */
 export function PhoneFragment() {
   return (
-    <div className="mx-auto w-[260px] rounded-[38px] border border-paper-ink/15 bg-[#1b1a18] p-2.5 shadow-[var(--shadow-product)]">
+    <div className="mx-auto w-[260px] rounded-[38px] border border-paper-ink/15 bg-black-ink p-2.5 shadow-[var(--shadow-product)]">
       <div className="overflow-hidden rounded-[30px] bg-pearl">
         <div className="flex h-12 items-end justify-between px-5 pb-1 text-[11px] font-medium text-ink">
           <span>9:41</span>
@@ -261,13 +261,13 @@ export function PhoneFragment() {
         <div className="px-4 pt-3 pb-5">
           <p className="text-[20px] font-medium text-ink">Chats</p>
           <div className="mt-3 flex gap-1 rounded-[10px] bg-black/[0.05] p-0.5 text-[12px] font-medium">
-            <span className="flex-1 rounded-[8px] bg-white py-1.5 text-center shadow-[0_1px_2px_rgb(0_0_0/0.08)]">Waiting 2</span>
+            <span className="flex-1 rounded-[8px] bg-white py-1.5 text-center shadow-[0_1px_2px_rgb(38_70_83/0.08)]">Waiting 2</span>
             <span className="flex-1 py-1.5 text-center text-ink-48">Mine</span>
           </div>
           {["Return of a used cushion cover", "Bulk order invoice"].map((x, n) => (
-            <div key={x} className="mt-2.5 rounded-[14px] bg-white p-3 shadow-[0_0_0_1px_rgb(0_0_0/0.05)]">
+            <div key={x} className="mt-2.5 rounded-[14px] bg-white p-3 shadow-[0_0_0_1px_rgb(38_70_83/0.05)]">
               <p className="flex items-center gap-2 text-[12px] text-ink-48">
-                <span className="live-dot text-warning" />
+                <span className="live-dot text-sand" />
                 <span className="t-mono">{n ? "HI" : "ES"}</span>
                 <span className="t-mono ml-auto text-warning">{n ? "0:31" : "1:12"}</span>
               </p>

@@ -40,7 +40,7 @@ create table if not exists widgets (
   business_id         uuid not null references businesses(id) on delete cascade,
   name                text not null,
   type                text not null default 'widget' check (type in ('widget', 'link')),
-  color               text not null default '#0066cc',
+  color               text not null default '#217a70',
   title               text not null default 'Support',
   greeting            text not null default 'Hi! How can we help you today?',
   avatar              text,

@@ -38,7 +38,7 @@ export const POST = handle(async (req: Request) => {
     if (existing) return existing.id;
     const [created] = await tx<{ id: string }[]>`
       insert into widgets (business_id, name, color, title, greeting, languages)
-      values (${user.business_id}, ${w.name ?? "Website chat"}, ${w.color ?? "#0066cc"},
+      values (${user.business_id}, ${w.name ?? "Website chat"}, ${w.color ?? "#217a70"},
               ${w.title ?? user.business_name}, ${w.greeting ?? "Hi! How can we help you today?"}, ${[defaultLang]})
       returning id
     `;

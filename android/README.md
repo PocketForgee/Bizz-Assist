@@ -2,7 +2,7 @@
 
 The agent app. You sign in, see the chats waiting for a person, claim one, answer the customer and resolve the chat.
 
-Kotlin, Jetpack Compose (Material 3), Retrofit with kotlinx.serialization, DataStore. The app uses the same design tokens as the web app: graphite surfaces, one deep-green accent and the numbered "slip" tags.
+Kotlin, Jetpack Compose (Material 3), Retrofit with kotlinx.serialization, DataStore. The app uses the same design tokens as the web app: charcoal ink (#264653), one teal accent (#2A9D8F, deepened to #217A70 where it carries text) and the numbered "slip" tags.
 
 A ready-to-install build is `BizzAssist-Agent.apk` in the repository root. It points at the demo server.
 

@@ -100,7 +100,7 @@ async function main() {
     `;
     await tx`
       insert into widgets (id, business_id, name, color, title, greeting, languages, persona, enabled_action_ids)
-      values (${widgetId}, ${businessId}, 'Website chat', '#0066cc', 'Lumen & Loom',
+      values (${widgetId}, ${businessId}, 'Website chat', '#217a70', 'Lumen & Loom',
               'Hi! Ask me about orders, delivery or returns.', ${["en", "es", "hi"]},
               'Warm and brief. No emojis.', ${[actionId]})
     `;

@@ -113,7 +113,7 @@ export function ChatView({
       <div className="shrink-0 border-t border-hairline bg-canvas px-3 pt-3 pb-2">
         <form
           onSubmit={submit}
-          className="flex items-end gap-2 rounded-[16px] border border-hairline bg-pearl p-1.5 pl-4 transition-[border-color,box-shadow] focus-within:border-[var(--accent)] focus-within:bg-canvas"
+          className="composer flex items-end gap-2 rounded-[16px] bg-pearl p-1.5 pl-4 focus-within:bg-canvas"
         >
           <label className="sr-only" htmlFor="chat-input">
             Message

@@ -156,7 +156,7 @@ export default function Home() {
               >
                 <div className="flex items-center justify-between">
                   <h3 className="text-[18px] font-medium">{PLAN_LABEL[plan]}</h3>
-                  {lead && <span className="slip text-primary-on-dark">Most shops</span>}
+                  {lead && <span className="slip text-saffron">Most shops</span>}
                 </div>
                 <p className={lead ? "mt-2 min-h-[44px] text-[14px] text-paper/70" : "mt-2 min-h-[44px] text-[14px] text-paper-ink-2"}>{line}</p>
                 <p className="t-figure mt-8">{fmt(PLAN_LIMITS[plan].aiReplies)}</p>

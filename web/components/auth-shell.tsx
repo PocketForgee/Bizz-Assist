@@ -27,7 +27,7 @@ export function AuthShell({ title, lead, children, width = 380 }: { title: strin
           <span className="text-paper-ink-2">Answered from then on.</span>
         </p>
         <div className="play mt-12 flex max-w-[440px] flex-col gap-3">
-          <div style={{ "--t": 200 } as React.CSSProperties} className="max-w-[80%] self-start rounded-[14px] rounded-bl-[4px] bg-white px-4 py-2.5 text-[14px] text-paper-ink shadow-[0_1px_2px_rgb(0_0_0/0.05)]">
+          <div style={{ "--t": 200 } as React.CSSProperties} className="max-w-[80%] self-start rounded-[14px] rounded-bl-[4px] bg-white px-4 py-2.5 text-[14px] text-paper-ink shadow-[0_1px_2px_rgb(38_70_83/0.05)]">
             Can I return a cushion cover I&apos;ve already used?
           </div>
           <div style={{ "--t": 700 } as React.CSSProperties} className="flex items-center gap-2 self-center py-1 text-[12px] text-paper-ink-2">

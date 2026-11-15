@@ -332,11 +332,11 @@ export function AgentInbox({ me, initialConversation, className }: { me: { id: s
                   aria-current={active ? "true" : undefined}
                   className={cn(
                     "press flex w-full flex-col gap-1.5 rounded-md px-3 py-2.5 text-left",
-                    active ? "bg-canvas shadow-[0_1px_2px_rgb(0_0_0/0.06),0_0_0_1px_rgb(0_0_0/0.06)]" : "hover:bg-[rgb(23_23_23/0.04)]",
+                    active ? "bg-canvas shadow-[0_1px_2px_rgb(38_70_83/0.06),0_0_0_1px_rgb(38_70_83/0.06)]" : "hover:bg-[rgb(23_23_23/0.04)]",
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    {r.status === "waiting" && <span className="live-dot shrink-0 text-warning" aria-label="Waiting" />}
+                    {r.status === "waiting" && <span className="live-dot shrink-0 text-sand" aria-label="Waiting" />}
                     <span className="flex-1 truncate text-[14px] font-medium text-ink">{customerName(r.nx_group_id)}</span>
                     <span className={cn("t-mono shrink-0", r.status === "waiting" ? "text-warning" : "text-ink-48")}>
                       {tab === "waiting" ? since(r.waiting_since, now) : tab === "closed" ? (r.rating ? `${r.rating}/5` : "") : since(r.last_at, now)}
@@ -469,7 +469,7 @@ export function AgentInbox({ me, initialConversation, className }: { me: { id: s
                 {canChat ? (
                   <form
                     onSubmit={send}
-                    className="mx-auto flex max-w-[720px] items-end gap-2 rounded-[14px] border border-hairline bg-canvas p-1.5 pl-3.5 shadow-[0_1px_2px_rgb(0_0_0/0.04)] transition-[border-color,box-shadow] focus-within:border-primary focus-within:shadow-[0_0_0_3px_var(--primary-soft)]"
+                    className="composer mx-auto flex max-w-[720px] items-end gap-2 rounded-[14px] bg-canvas p-1.5 pl-3.5"
                   >
                     <label htmlFor="agent-reply" className="sr-only">
                       Reply

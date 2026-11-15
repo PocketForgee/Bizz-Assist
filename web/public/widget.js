@@ -10,7 +10,7 @@
   window.__bizzassistLoaded = true;
 
   var origin = new URL(script.src).origin;
-  var color = script.getAttribute("data-color") || "#0066cc";
+  var color = script.getAttribute("data-color") || "#217a70";
   var side = script.getAttribute("data-position") === "left" ? "left" : "right";
   var open = false;
   var frame = null;

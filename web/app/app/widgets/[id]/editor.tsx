@@ -222,12 +222,12 @@ export function WidgetEditor({
           </button>
         </div>
 
-        <div className="flex items-start justify-center rounded-lg bg-parchment py-6 lg:sticky lg:top-[68px]">
-          <div className="h-[620px] w-[320px] overflow-hidden rounded-[40px] border-[10px] border-ink bg-canvas shadow-[var(--shadow-product)]" aria-label="Live preview">
+        <div className="flex items-start justify-center rounded-lg bg-parchment px-4 py-6 lg:sticky lg:top-[68px]">
+          <div className="h-[min(620px,80dvh)] w-full max-w-[320px] overflow-hidden rounded-[40px] border-[10px] border-ink bg-canvas shadow-[var(--shadow-product)]" aria-label="Live preview">
             <ChatView
               title={draft.title || businessName}
               avatar={/^https:\/\//.test(draft.avatar) ? draft.avatar : null}
-              accent={/^#[0-9a-f]{6}$/i.test(draft.color) ? draft.color : "#0066cc"}
+              accent={/^#[0-9a-f]{6}$/i.test(draft.color) ? draft.color : "#217a70"}
               status="Usually replies instantly"
               greeting={draft.greeting}
               messages={[
@@ -250,7 +250,7 @@ function InstallPanel({ widgetId, origin, type, color }: { widgetId: string; ori
 
   useEffect(() => {
     if (!origin) return;
-    QRCode.toDataURL(link, { margin: 1, width: 360, color: { dark: "#1d1d1f", light: "#ffffff" } })
+    QRCode.toDataURL(link, { margin: 1, width: 360, color: { dark: "#264653", light: "#ffffff" } })
       .then(setQr)
       .catch(() => setQr(null));
   }, [link, origin]);

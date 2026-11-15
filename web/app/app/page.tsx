@@ -90,7 +90,7 @@ export default async function HomePage() {
                 {waitingRows.map((r) => (
                   <li key={r.id}>
                     <Link href={`/app/inbox?c=${r.id}`} className="flex items-center gap-3 px-5 py-3.5 transition-colors hover:bg-pearl">
-                      <span className="live-dot shrink-0 text-warning" aria-hidden />
+                      <span className="live-dot shrink-0 text-sand" aria-hidden />
                       <span className="min-w-0 flex-1 truncate text-[14px] text-ink" dir="auto">
                         {r.issue ?? "New conversation"}
                       </span>
@@ -173,7 +173,7 @@ export default async function HomePage() {
 
 function Stat({ label, value, note, href, accent, warn }: { label: string; value: string; note: string; href?: string; accent?: boolean; warn?: boolean }) {
   const body = (
-    <div className={cn("h-full rounded-lg border border-hairline bg-canvas p-5 shadow-[0_1px_2px_rgb(0_0_0/0.04)]", href && "transition-[border-color,box-shadow] hover:border-[rgb(23_23_23/0.18)]")}>
+    <div className={cn("h-full rounded-lg border border-hairline bg-canvas p-5 shadow-[0_1px_2px_rgb(38_70_83/0.04)]", href && "transition-[border-color,box-shadow] hover:border-[rgb(23_23_23/0.18)]")}>
       <p className="t-caption text-ink-48">{label}</p>
       <p className={cn("t-figure mt-3", accent ? "text-primary" : warn ? "text-warning" : "text-ink")}>{value}</p>
       <p className="t-fine mt-2 text-ink-48">{note}</p>
@@ -190,7 +190,7 @@ function Stat({ label, value, note, href, accent, warn }: { label: string; value
 
 function Panel({ title, href, more, aside, children }: { title: string; href?: string; more?: string; aside?: string; children: React.ReactNode }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-hairline bg-canvas shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
+    <section className="overflow-hidden rounded-lg border border-hairline bg-canvas shadow-[0_1px_2px_rgb(38_70_83/0.04)]">
       <header className="flex h-12 items-center justify-between border-b border-divider px-5">
         <h2 className="text-[15px] font-medium text-ink">{title}</h2>
         {href && more ? (

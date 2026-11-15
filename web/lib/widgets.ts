@@ -43,7 +43,7 @@ export function parseWidgetPatch(body: Record<string, unknown>): WidgetPatch {
   }
   if ("color" in body) {
     const c = str(body, "color", { label: "a colour" });
-    if (!HEX_COLOR.test(c)) throw new HttpError(400, "Colour must look like #0066cc.", "color");
+    if (!HEX_COLOR.test(c)) throw new HttpError(400, "Colour must look like #217a70.", "color");
     p.color = c.toLowerCase();
   }
   if ("title" in body) p.title = str(body, "title", { max: 60, label: "a title" });

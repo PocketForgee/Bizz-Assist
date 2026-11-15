@@ -8,9 +8,9 @@ export const cn = (...v: ClassValue[]) => twMerge(clsx(v));
 type Variant = "primary" | "secondary" | "dark" | "ghost" | "danger";
 
 const VARIANTS: Record<Variant, string> = {
-  primary: "bg-primary text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_1px_2px_rgb(0_0_0/0.08)] hover:bg-primary-focus",
-  secondary: "bg-canvas text-ink border border-hairline shadow-[0_1px_2px_rgb(0_0_0/0.04)] hover:bg-parchment",
-  dark: "bg-ink text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12)] hover:bg-[#2b2b2d]",
+  primary: "bg-primary text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12),0_1px_2px_rgb(38_70_83/0.08)] hover:bg-primary-focus",
+  secondary: "bg-canvas text-ink border border-hairline shadow-[0_1px_2px_rgb(38_70_83/0.04)] hover:bg-parchment",
+  dark: "bg-ink text-white shadow-[inset_0_1px_0_rgb(255_255_255/0.12)] hover:bg-tile-2",
   ghost: "bg-transparent text-ink-80 hover:bg-parchment hover:text-ink",
   danger: "bg-canvas text-danger border border-hairline hover:border-danger/40 hover:bg-danger/5",
 };
@@ -27,7 +27,7 @@ export function ButtonLink({ variant = "primary", className, ...props }: Compone
 }
 
 export function Card({ className, ...props }: ComponentProps<"div">) {
-  return <div className={cn("rounded-lg border border-hairline bg-canvas p-6 shadow-[0_1px_2px_rgb(0_0_0/0.04)]", className)} {...props} />;
+  return <div className={cn("rounded-lg border border-hairline bg-canvas p-6 shadow-[0_1px_2px_rgb(38_70_83/0.04)]", className)} {...props} />;
 }
 
 export function Chip({ tone = "neutral", className, ...props }: ComponentProps<"span"> & { tone?: "neutral" | "success" | "warning" | "danger" | "info" }) {
@@ -42,7 +42,7 @@ export function Chip({ tone = "neutral", className, ...props }: ComponentProps<"
 }
 
 const inputCls =
-  "w-full rounded-md border border-hairline bg-canvas px-3 min-h-10 text-[15px] text-ink shadow-[0_1px_2px_rgb(0_0_0/0.03)] placeholder:text-ink-48 transition-[border-color,box-shadow] focus:border-primary focus:shadow-[0_0_0_3px_var(--primary-soft)] focus:outline-none aria-[invalid=true]:border-danger";
+  "w-full rounded-md border border-hairline bg-canvas px-3 min-h-10 text-[15px] text-ink shadow-[0_1px_2px_rgb(38_70_83/0.03)] placeholder:text-ink-48 transition-[border-color,box-shadow] focus:border-ink/30 focus:shadow-[var(--ring)] focus:outline-none aria-[invalid=true]:border-danger";
 
 export const Input = forwardRef<HTMLInputElement, ComponentProps<"input">>(function Input({ className, ...props }, ref) {
   return <input ref={ref} className={cn(inputCls, className)} {...props} />;
@@ -90,10 +90,10 @@ export function Field({
 /** Sticky page header: title (and an optional line under it) left, one primary action right. */
 export function SubNav({ title, lead, action }: { title: string; lead?: ReactNode; action?: ReactNode }) {
   return (
-    <div className="frosted sticky top-0 z-10 -mx-6 mb-8 flex min-h-16 items-center justify-between gap-4 border-b border-hairline px-6 py-3 lg:-mx-10 lg:px-10">
+    <div className="frosted sticky top-14 z-10 -mx-4 mb-6 flex min-h-16 flex-wrap items-center justify-between gap-x-4 gap-y-2 border-b border-hairline px-4 py-3 sm:-mx-6 sm:mb-8 sm:px-6 min-[900px]:top-0 lg:-mx-10 lg:px-10">
       <div className="min-w-0">
         <h1 className="text-[20px] font-medium leading-tight tracking-[-0.01em] text-ink">{title}</h1>
-        {lead && <p className="t-caption mt-0.5 truncate text-ink-48">{lead}</p>}
+        {lead && <p className="t-caption mt-0.5 text-ink-48 sm:truncate">{lead}</p>}
       </div>
       {action}
     </div>
@@ -132,7 +132,7 @@ export function Segmented<T extends string>({
           onClick={() => onChange(o.value)}
           className={cn(
             "press min-h-8 rounded-[8px] px-3 t-caption-strong tabular-nums",
-            value === o.value ? "bg-canvas text-ink shadow-[0_1px_2px_rgb(0_0_0/0.08),0_0_0_1px_rgb(0_0_0/0.04)]" : "text-ink-48 hover:text-ink",
+            value === o.value ? "bg-canvas text-ink shadow-[0_1px_2px_rgb(38_70_83/0.08),0_0_0_1px_rgb(38_70_83/0.04)]" : "text-ink-48 hover:text-ink",
           )}
         >
           {o.label}

@@ -21,7 +21,7 @@ export default async function InboxPage({ searchParams }: { searchParams: Promis
           </Link>
         }
       />
-      <AgentInbox me={{ id: user.id, role: user.role }} initialConversation={c} className="h-[calc(100dvh-64px-32px-24px)] overflow-hidden rounded-lg border border-hairline shadow-[0_1px_2px_rgb(0_0_0/0.04)] max-[899px]:h-[calc(100dvh-56px-64px-32px-24px)]" />
+      <AgentInbox me={{ id: user.id, role: user.role }} initialConversation={c} className="h-[calc(100dvh-64px-32px-24px)] overflow-hidden rounded-lg border border-hairline shadow-[0_1px_2px_rgb(38_70_83/0.04)] max-[899px]:h-[calc(100dvh-56px-64px-32px-24px)]" />
     </>
   );
 }

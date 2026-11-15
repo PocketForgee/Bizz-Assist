@@ -235,13 +235,13 @@ export function BuyerChat({ widget, embed }: { widget: PublicWidget; embed: bool
         ) : null
       }
       onClose={embed ? () => window.parent.postMessage({ type: "bizzassist:close" }, "*") : undefined}
-      className={cn(!embed && "md:overflow-hidden md:rounded-[20px] md:border md:border-hairline md:shadow-[0_24px_48px_-16px_rgb(0_0_0/0.18)]")}
+      className={cn(!embed && "md:overflow-hidden md:rounded-[20px] md:border md:border-hairline md:shadow-[0_24px_48px_-16px_rgb(38_70_83/0.18)]")}
     />
   );
 
   if (embed) return <div className="h-dvh">{view}</div>;
   return (
-    <main className="flex h-dvh justify-center bg-canvas md:items-center md:bg-[#efeff1] md:py-8">
+    <main className="flex h-dvh justify-center bg-canvas md:items-center md:bg-parchment md:py-8">
       <div className="h-full w-full md:h-[min(760px,100%)] md:max-w-[420px]">{view}</div>
     </main>
   );
@@ -262,7 +262,7 @@ function RatingBar({ widgetId, guestId, accent }: { widgetId: string; guestId: s
   }
 
   return (
-    <div className="bubble-in mx-3 mb-3 flex flex-col items-center gap-3 rounded-[14px] border border-hairline bg-canvas px-4 py-4 text-center shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
+    <div className="bubble-in mx-3 mb-3 flex flex-col items-center gap-3 rounded-[14px] border border-hairline bg-canvas px-4 py-4 text-center shadow-[0_1px_2px_rgb(38_70_83/0.04)]">
       {sent ? (
         <>
           <p className="t-caption-strong" role="status">

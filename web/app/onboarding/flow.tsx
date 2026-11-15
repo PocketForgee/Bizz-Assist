@@ -10,7 +10,7 @@ import { LANGS } from "@/lib/langs";
 
 const STEPS = ["Business", "Website", "Done"] as const;
 
-const SWATCHES = ["#0066cc", "#1d1d1f", "#248a3d", "#b25000", "#8e44ad", "#d70015"];
+const SWATCHES = ["#217a70", "#264653", "#c4472b", "#b0611c", "#8a6a14", "#3a5a8c"];
 
 export function OnboardingFlow({ businessName }: { businessName: string }) {
   const router = useRouter();
@@ -24,7 +24,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
     defaultLang: "en",
     supportHours: "",
     website: "",
-    color: "#0066cc",
+    color: "#217a70",
     greeting: "Hi! How can we help you today?",
   });
   const set = (k: keyof typeof form) => (v: string) => setForm((f) => ({ ...f, [k]: v }));
@@ -74,7 +74,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
           ))}
         </ol>
 
-        <div key={step} className="route-in w-full rounded-lg border border-hairline bg-canvas p-8 shadow-[0_1px_2px_rgb(0_0_0/0.04)]">
+        <div key={step} className="route-in w-full rounded-lg border border-hairline bg-canvas p-8 shadow-[0_1px_2px_rgb(38_70_83/0.04)]">
           {step === 0 && (
             <form
               className="flex flex-col gap-4"
@@ -89,7 +89,7 @@ export function OnboardingFlow({ businessName }: { businessName: string }) {
               </Field>
               <Field label="Main customer language" error={err("defaultLang")}>
                 {(a) => (
-                  <select {...a} value={form.defaultLang} onChange={(e) => set("defaultLang")(e.target.value)} className="min-h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-[15px] focus:border-primary focus:outline-none">
+                  <select {...a} value={form.defaultLang} onChange={(e) => set("defaultLang")(e.target.value)} className="min-h-10 w-full rounded-md border border-hairline bg-canvas px-3 text-[15px] focus:border-ink/30 focus:shadow-[var(--ring)] focus:outline-none">
                     {LANGS.map((l) => (
                       <option key={l.code} value={l.code}>
                         {l.label}

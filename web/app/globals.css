@@ -1,49 +1,60 @@
 @import "tailwindcss";
 
 /*
- * BizzAssist design tokens. Direction: a shop's service counter. Calm, exact, a little warm.
- * App surfaces stay on a graphite ramp; the landing page sits on a warm paper ramp (.paper).
- * One accent, a deep "stamp ink" green, used for the primary action, the selection and one key figure.
+ * BizzAssist design tokens. Palette: charcoal #264653, teal #2a9d8f, saffron #e9c46a, sand #f4a261, sienna #e76f51.
+ * Text and fills that carry text use deeper steps of the palette so they pass WCAG AA (4.5:1) on white.
+ * App surfaces are near-white with a faint charcoal tint; the landing page sits on warm saffron-tinted paper.
  * Signature: the numbered source slip (S1) that shows where an answer came from.
  * Token names are shared by every screen; never write raw hex in components.
+ * Everything custom lives in @layer base / components so Tailwind utilities (focus:outline-none, text-*) always win.
  */
 :root {
-  --primary: #0f6e56;
-  --primary-focus: #0b5c48;
-  --primary-on-dark: #63d2b0;
-  --primary-soft: #e7f2ee;
-  --ink: #171717;
-  --ink-80: #525252;
-  --ink-48: #6f6f6f;
+  /* the palette, as given */
+  --charcoal: #264653;
+  --teal: #2a9d8f;
+  --saffron: #e9c46a;
+  --sand: #f4a261;
+  --sienna: #e76f51;
+
+  /* roles */
+  --primary: #217a70; /* teal, one step deeper: white text on it is 5.1:1 */
+  --primary-focus: #1b665d;
+  --primary-on-dark: #5cc2b5;
+  --primary-soft: #e3f2f0;
+  --ink: #264653;
+  --ink-80: #4a6470;
+  --ink-48: #5f737c;
   --canvas: #ffffff;
-  --parchment: #f4f4f5;
-  --pearl: #fafafa;
-  --tile-1: #19191b;
-  --tile-2: #232325;
-  --tile-3: #141415;
-  --black: #0f0f10;
-  --hairline: rgb(23 23 23 / 0.1);
-  --divider: rgb(23 23 23 / 0.06);
-  --chip: #f4f4f5;
+  --parchment: #eef3f3;
+  --pearl: #f7f9f9;
+  --tile-1: #1e3a45;
+  --tile-2: #24434f;
+  --tile-3: #1a323c;
+  --black: #172a32;
+  --hairline: rgb(38 70 83 / 0.13);
+  --divider: rgb(38 70 83 / 0.07);
+  --chip: #eef3f3;
   /* status only, never as an accent */
-  --danger: #c62828;
-  --success: #15803d;
-  --warning: #a14b06;
-  --success-on-dark: #4cc38a;
-  --danger-on-dark: #e5484d;
+  --danger: #c4472b; /* sienna, deeper */
+  --success: #217a70;
+  --warning: #b0611c; /* sand, deeper */
+  --success-on-dark: #5cc2b5;
+  --danger-on-dark: #f0917a;
 
   /* warm paper ramp (landing) */
-  --paper: #f7f4ee;
-  --paper-raised: #efe9df;
-  --paper-ink: #1f1b16;
-  --paper-ink-2: #5e554a;
+  --paper: #fbf7ee;
+  --paper-raised: #f5ead2;
+  --paper-ink: #264653;
+  --paper-ink-2: #4f6b75;
 
   --r-sm: 6px;
   --r-md: 10px;
   --r-lg: 16px;
   --r-pill: 10px;
-  --shadow-product: 0 1px 2px rgb(0 0 0 / 0.05), 0 24px 48px -16px rgb(31 27 22 / 0.18);
-  --shadow-pop: 0 8px 24px rgb(0 0 0 / 0.08), 0 1px 2px rgb(0 0 0 / 0.05);
+  --shadow-product: 0 1px 2px rgb(38 70 83 / 0.06), 0 24px 48px -16px rgb(38 70 83 / 0.22);
+  --shadow-pop: 0 8px 24px rgb(38 70 83 / 0.1), 0 1px 2px rgb(38 70 83 / 0.06);
+  /* the one focus treatment for text fields: a darker hairline and a faint halo, no coloured outline */
+  --ring: 0 0 0 3px rgb(38 70 83 / 0.07);
 
   --ease-standard: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-sheet: cubic-bezier(0.22, 1, 0.36, 1);
@@ -84,6 +95,13 @@
   --color-paper-raised: var(--paper-raised);
   --color-paper-ink: var(--paper-ink);
   --color-paper-ink-2: var(--paper-ink-2);
+  --color-charcoal: var(--charcoal);
+  --color-teal: var(--teal);
+  --color-saffron: var(--saffron);
+  --color-sand: var(--sand);
+  --color-sienna: var(--sienna);
+  --color-sienna-ink: var(--danger);
+  --color-black-ink: var(--black);
 
   --radius-sm: var(--r-sm);
   --radius-md: var(--r-md);
@@ -99,126 +117,190 @@
   --ease-sheet: var(--ease-sheet);
 }
 
-html {
-  -webkit-text-size-adjust: 100%;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.47;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* no sideways scroll on any screen size, even if a decorative piece pokes past the edge */
+    overflow-x: clip;
+  }
+
+  img,
+  svg,
+  video {
+    max-width: 100%;
+  }
+
+  ::selection {
+    background: rgb(42 157 143 / 0.2);
+    color: var(--ink);
+  }
+
+  /* keyboard focus for buttons and links: a teal ring. Text fields draw their own soft halo instead. */
+  :focus-visible {
+    outline: 2px solid var(--teal);
+    outline-offset: 2px;
+  }
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible {
+    outline: none;
+  }
 }
 
-body {
-  background: var(--canvas);
-  color: var(--ink);
-  font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 1.47;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
+@layer components {
+  /* type scale: hierarchy from size and colour; weights 400 / 500, 600 only for rare emphasis */
+  .t-hero { font-family: var(--font-serif); font-size: 68px; font-weight: 400; line-height: 1.02; letter-spacing: -0.03em; }
+  .t-display { font-size: 36px; font-weight: 500; line-height: 1.12; letter-spacing: -0.02em; }
+  .t-section { font-size: 26px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
+  .t-lead { font-size: 18px; font-weight: 400; line-height: 1.6; color: var(--ink-80); }
+  .t-tagline { font-size: 18px; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; }
+  .t-body-strong { font-size: 15px; font-weight: 500; line-height: 1.33; }
+  .t-caption { font-size: 14px; font-weight: 400; line-height: 1.43; }
+  .t-caption-strong { font-size: 14px; font-weight: 500; line-height: 1.43; }
+  .t-fine { font-size: 12px; font-weight: 400; line-height: 1.33; letter-spacing: 0.01em; }
+  .t-mono { font-family: var(--font-mono); font-size: 12px; line-height: 1.33; font-variant-numeric: tabular-nums; }
+  .t-figure { font-size: 30px; font-weight: 500; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+
+  @media (max-width: 1068px) { .t-hero { font-size: 54px; } }
+  @media (max-width: 640px) {
+    .t-hero { font-size: 42px; }
+    .t-display { font-size: 28px; }
+    .t-section { font-size: 22px; }
+    .t-figure { font-size: 26px; }
+  }
+  @media (max-width: 360px) { .t-hero { font-size: 36px; } }
+  @media (min-width: 1800px) { .t-hero { font-size: 80px; } }
+
+  /* press micro-interaction used by every button */
+  .press {
+    transition: transform var(--d-press) var(--ease-standard), background-color var(--d-hover) var(--ease-standard),
+      color var(--d-hover) var(--ease-standard), border-color var(--d-hover) var(--ease-standard), opacity var(--d-hover) var(--ease-standard),
+      box-shadow var(--d-hover) var(--ease-standard);
+  }
+  .press:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+
+  /* the signature: a numbered source slip, like the stub of an order ticket */
+  .slip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 4px;
+    border: 1px dashed color-mix(in srgb, currentColor 40%, transparent);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  /* message composers: one quiet container; the field inside has no border or outline of its own */
+  .composer {
+    border: 1px solid var(--hairline);
+    transition: border-color var(--d-hover) var(--ease-standard), box-shadow var(--d-hover) var(--ease-standard), background-color var(--d-hover) var(--ease-standard);
+  }
+  .composer:focus-within {
+    border-color: rgb(38 70 83 / 0.3);
+    box-shadow: var(--ring);
+    background-color: var(--canvas);
+  }
+  .composer textarea,
+  .composer input {
+    border: 0;
+    outline: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .route-in { animation: route-in var(--d-route) var(--ease-standard) both; }
+
+  /* staggered entrance for the first few children of a list or grid */
+  .stagger > * { animation: route-in var(--d-route) var(--ease-standard) both; }
+  .stagger > *:nth-child(2) { animation-delay: 50ms; }
+  .stagger > *:nth-child(3) { animation-delay: 100ms; }
+  .stagger > *:nth-child(4) { animation-delay: 150ms; }
+  .stagger > *:nth-child(5) { animation-delay: 200ms; }
+  .stagger > *:nth-child(n + 6) { animation-delay: 250ms; }
+
+  .row-in { animation: row-in var(--d-panel) var(--ease-standard) both; }
+  .bubble-in { animation: bubble-in 320ms var(--ease-standard) both; }
+
+  .typing-dot { animation: typing 1.2s var(--ease-standard) infinite; }
+  .typing-dot:nth-child(2) { animation-delay: 0.15s; }
+  .typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+  /* a live status dot: the only looping motion, and only on things that really are live */
+  .live-dot { width: 8px; height: 8px; border-radius: 9999px; background: currentColor; animation: live 2s var(--ease-standard) infinite; }
+
+  /* sticky bars: a near-solid surface with a hairline, no glass */
+  .frosted {
+    background: color-mix(in srgb, var(--pearl) 94%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .sheet-in { animation: sheet-in 360ms var(--ease-standard) both; }
+  .fade-in { animation: fade-in 200ms var(--ease-standard) both; }
+
+  /* ---- landing page ---- */
+  .paper { background: var(--paper); color: var(--paper-ink); }
+
+  /* the hero conversation plays once: each line arrives in turn */
+  .play > * { animation: bubble-in 420ms var(--ease-standard) both; animation-delay: calc(var(--t, 0) * 1ms); }
+
+  /* range slider: a thin charcoal track and a small slip-shaped thumb */
+  .stage-range { appearance: none; -webkit-appearance: none; width: 100%; height: 44px; background: transparent; cursor: pointer; }
+  .stage-range::-webkit-slider-runnable-track { height: 4px; border-radius: 9999px; background: linear-gradient(to right, var(--paper-ink) var(--fill), rgb(38 70 83 / 0.15) var(--fill)); }
+  .stage-range::-moz-range-track { height: 4px; border-radius: 9999px; background: rgb(38 70 83 / 0.15); }
+  .stage-range::-moz-range-progress { height: 4px; border-radius: 9999px; background: var(--paper-ink); }
+  .stage-range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -12px; border-radius: 8px; background: var(--primary); border: 3px solid var(--paper); box-shadow: 0 1px 3px rgb(38 70 83 / 0.25); }
+  .stage-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 8px; background: var(--primary); border: 3px solid var(--paper); }
 }
 
-::selection {
-  background: var(--primary-soft);
-  color: var(--ink);
+@layer components {
+  /* section parts rise in as they enter; without scroll timelines everything is simply shown */
+  @supports (animation-timeline: view()) {
+    .rise {
+      animation: rise linear both;
+      animation-timeline: view();
+      animation-range: entry calc(var(--i, 0) * 6%) entry calc(55% + var(--i, 0) * 6%);
+    }
+  }
 }
 
-/* type scale: hierarchy from size and colour; weights 400 / 500, 600 only for rare emphasis */
-.t-hero { font-family: var(--font-serif); font-size: 68px; font-weight: 400; line-height: 1.02; letter-spacing: -0.03em; }
-.t-display { font-size: 36px; font-weight: 500; line-height: 1.12; letter-spacing: -0.02em; }
-.t-section { font-size: 26px; font-weight: 500; line-height: 1.2; letter-spacing: -0.015em; }
-.t-lead { font-size: 18px; font-weight: 400; line-height: 1.6; color: var(--ink-80); }
-.t-tagline { font-size: 18px; font-weight: 500; line-height: 1.3; letter-spacing: -0.01em; }
-.t-body-strong { font-size: 15px; font-weight: 500; line-height: 1.33; }
-.t-caption { font-size: 14px; font-weight: 400; line-height: 1.43; }
-.t-caption-strong { font-size: 14px; font-weight: 500; line-height: 1.43; }
-.t-fine { font-size: 12px; font-weight: 400; line-height: 1.33; letter-spacing: 0.01em; }
-.t-mono { font-family: var(--font-mono); font-size: 12px; line-height: 1.33; font-variant-numeric: tabular-nums; }
-.t-figure { font-size: 30px; font-weight: 500; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-
-@media (max-width: 1068px) { .t-hero { font-size: 54px; } }
-@media (max-width: 640px) { .t-hero { font-size: 42px; } .t-display { font-size: 30px; } .t-section { font-size: 23px; } }
-
-/* keyboard focus: always visible, in the accent */
-:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
-}
-
-/* press micro-interaction used by every button */
-.press {
-  transition: transform var(--d-press) var(--ease-standard), background-color var(--d-hover) var(--ease-standard),
-    color var(--d-hover) var(--ease-standard), border-color var(--d-hover) var(--ease-standard), opacity var(--d-hover) var(--ease-standard),
-    box-shadow var(--d-hover) var(--ease-standard);
-}
-.press:active:not(:disabled) {
-  transform: scale(0.97);
-}
-
-/* the signature: a numbered source slip, like the stub of an order ticket */
-.slip {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: 4px;
-  border: 1px dashed color-mix(in srgb, currentColor 35%, transparent);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-/* route content enter: fade + 8px rise, keyed on pathname */
 @keyframes route-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
-.route-in { animation: route-in var(--d-route) var(--ease-standard) both; }
-
-/* staggered entrance for the first few children of a list or grid */
-.stagger > * { animation: route-in var(--d-route) var(--ease-standard) both; }
-.stagger > *:nth-child(2) { animation-delay: 50ms; }
-.stagger > *:nth-child(3) { animation-delay: 100ms; }
-.stagger > *:nth-child(4) { animation-delay: 150ms; }
-.stagger > *:nth-child(5) { animation-delay: 200ms; }
-.stagger > *:nth-child(n + 6) { animation-delay: 250ms; }
-
-/* list row insert */
 @keyframes row-in {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: none; }
 }
-.row-in { animation: row-in var(--d-panel) var(--ease-standard) both; }
-
-/* chat bubble enter */
 @keyframes bubble-in {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
-.bubble-in { animation: bubble-in 320ms var(--ease-standard) both; }
-
-/* AI typing dots */
 @keyframes typing {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
   30% { transform: translateY(-3px); opacity: 1; }
 }
-.typing-dot { animation: typing 1.2s var(--ease-standard) infinite; }
-.typing-dot:nth-child(2) { animation-delay: 0.15s; }
-.typing-dot:nth-child(3) { animation-delay: 0.3s; }
-
-/* a live status dot: the only looping motion, and only on things that really are live */
 @keyframes live {
   0% { box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 40%, transparent); }
   70%, 100% { box-shadow: 0 0 0 6px transparent; }
 }
-.live-dot { width: 8px; height: 8px; border-radius: 9999px; background: currentColor; animation: live 2s var(--ease-standard) infinite; }
-
-/* sticky bars: a solid surface with a hairline, no glass */
-.frosted {
-  background: color-mix(in srgb, var(--pearl) 94%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-/* sheet / dialog */
 @keyframes sheet-in {
   from { opacity: 0; transform: translateX(16px); }
   to { opacity: 1; transform: none; }
@@ -227,35 +309,10 @@ body {
   from { opacity: 0; }
   to { opacity: 1; }
 }
-.sheet-in { animation: sheet-in 360ms var(--ease-standard) both; }
-.fade-in { animation: fade-in 200ms var(--ease-standard) both; }
-
-/* ---- landing page ---- */
-.paper { background: var(--paper); color: var(--paper-ink); }
-
-/* section parts rise in as they enter; without scroll timelines everything is simply shown */
-@supports (animation-timeline: view()) {
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(16px); }
-    to { opacity: 1; transform: none; }
-  }
-  .rise {
-    animation: rise linear both;
-    animation-timeline: view();
-    animation-range: entry calc(var(--i, 0) * 6%) entry calc(55% + var(--i, 0) * 6%);
-  }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
 }
-
-/* the hero conversation plays once: each line arrives in turn */
-.play > * { animation: bubble-in 420ms var(--ease-standard) both; animation-delay: calc(var(--t, 0) * 1ms); }
-
-/* range slider: a thin ink track and a small slip-shaped thumb */
-.stage-range { appearance: none; -webkit-appearance: none; width: 100%; height: 44px; background: transparent; cursor: pointer; }
-.stage-range::-webkit-slider-runnable-track { height: 4px; border-radius: 9999px; background: linear-gradient(to right, var(--paper-ink) var(--fill), color-mix(in srgb, var(--paper-ink) 15%, transparent) var(--fill)); }
-.stage-range::-moz-range-track { height: 4px; border-radius: 9999px; background: color-mix(in srgb, var(--paper-ink) 15%, transparent); }
-.stage-range::-moz-range-progress { height: 4px; border-radius: 9999px; background: var(--paper-ink); }
-.stage-range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -12px; border-radius: 8px; background: var(--primary); border: 3px solid var(--paper); box-shadow: 0 1px 3px rgb(0 0 0 / 0.2); }
-.stage-range::-moz-range-thumb { width: 22px; height: 22px; border-radius: 8px; background: var(--primary); border: 3px solid var(--paper); }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {

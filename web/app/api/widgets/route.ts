@@ -22,7 +22,7 @@ export const POST = handle(async (req: Request) => {
   const [widget] = await sql<Widget[]>`
     insert into widgets (business_id, name, type, color, title, greeting, avatar, languages, persona, allowed_domains, escalation_keywords)
     values (
-      ${user.business_id}, ${p.name!}, ${p.type ?? "widget"}, ${p.color ?? "#0066cc"},
+      ${user.business_id}, ${p.name!}, ${p.type ?? "widget"}, ${p.color ?? "#217a70"},
       ${p.title ?? user.business_name}, ${p.greeting ?? "Hi! How can we help you today?"}, ${p.avatar ?? null},
       ${p.languages ?? []}, ${p.persona ?? ""}, ${p.allowed_domains ?? []},
       ${p.escalation_keywords ?? ["human", "agent", "person"]}

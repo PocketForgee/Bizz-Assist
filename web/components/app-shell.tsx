@@ -85,7 +85,7 @@ export function AppShell({
                         className={cn(
                           "press flex h-9 items-center gap-2.5 rounded-md px-3 text-[14px]",
                           active
-                            ? "bg-canvas font-medium text-ink shadow-[0_1px_2px_rgb(0_0_0/0.06),0_0_0_1px_rgb(0_0_0/0.05)]"
+                            ? "bg-canvas font-medium text-ink shadow-[0_1px_2px_rgb(38_70_83/0.06),0_0_0_1px_rgb(38_70_83/0.05)]"
                             : "text-ink-80 hover:bg-[rgb(23_23_23/0.04)] hover:text-ink",
                         )}
                       >
@@ -130,7 +130,7 @@ export function AppShell({
 
   return (
     <div className="flex min-h-dvh bg-pearl">
-      <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 border-r border-hairline bg-[#f4f4f5] min-[900px]:block">{sidebar}</aside>
+      <aside className="sticky top-0 hidden h-dvh w-[248px] shrink-0 border-r border-hairline bg-parchment min-[900px]:block">{sidebar}</aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-30 flex h-14 items-center gap-2 border-b border-hairline bg-pearl px-3 min-[900px]:hidden">
@@ -147,11 +147,11 @@ export function AppShell({
         </header>
         {open && (
           <div className="fixed inset-0 z-40 min-[900px]:hidden">
-            <button type="button" aria-label="Close menu" className="fade-in absolute inset-0 bg-[rgb(15_15_16/0.28)]" onClick={() => setOpen(false)} />
-            <aside className="sheet-in relative h-full w-[280px] border-r border-hairline bg-[#f4f4f5] shadow-[var(--shadow-pop)] [animation-name:route-in]">{sidebar}</aside>
+            <button type="button" aria-label="Close menu" className="fade-in absolute inset-0 bg-[rgb(23_42_50/0.32)]" onClick={() => setOpen(false)} />
+            <aside className="sheet-in relative h-full w-[min(280px,85vw)] border-r border-hairline bg-parchment shadow-[var(--shadow-pop)] [animation-name:route-in]">{sidebar}</aside>
           </div>
         )}
-        <main key={pathname} className="route-in min-w-0 flex-1 px-6 pb-20 lg:px-10">
+        <main key={pathname} className="route-in min-w-0 flex-1 px-4 pb-20 sm:px-6 lg:px-10">
           <div className="mx-auto max-w-[1360px]">{children}</div>
         </main>
       </div>

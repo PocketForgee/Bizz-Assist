@@ -179,7 +179,7 @@ function ActionSheet({ value, onClose, onSaved }: { value: Draft; onClose: () =>
           <Field label="Published CSV link" hint="Google Sheets › File › Share › Publish to web › CSV. The bot returns a row only when BOTH the order ID and the email or phone match." error={err("url_template")}>
             {(p) => <Input {...p} type="url" value={d.url_template} onChange={(e) => set("url_template", e.target.value)} placeholder="https://docs.google.com/spreadsheets/d/e/…/pub?output=csv" />}
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid gap-3 sm:grid-cols-2">
             <Field label="Order ID column" error={err("order_column")}>
               {(p) => <Input {...p} value={d.order_column} onChange={(e) => set("order_column", e.target.value)} />}
             </Field>
