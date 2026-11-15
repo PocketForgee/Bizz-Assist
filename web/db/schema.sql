@@ -136,3 +136,11 @@ create table if not exists ai_events (
   created_at      timestamptz not null default now()
 );
 create index if not exists ai_events_business_idx on ai_events(business_id, kind, created_at);
+
+-- ---- Phase 2 additions (idempotent) ----
+-- alternative phrasings of a Q&A question, shown to the model with the entry
+alter table knowledge_items add column if not exists alternatives text[] not null default '{}';
+-- source conversation of a learned answer (for the "from conversation" link)
+alter table knowledge_items add column if not exists conversation_id uuid references conversations(id) on delete set null;
+-- one row per URL per business, so re-adding a page re-syncs it instead of duplicating
+create unique index if not exists knowledge_web_url_uidx on knowledge_items(business_id, url) where source = 'web';

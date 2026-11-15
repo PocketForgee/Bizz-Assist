@@ -2,6 +2,8 @@ import { sql } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
 import { handle, HttpError, json, readJson, str } from "@/lib/http";
 import { parseWidgetPatch } from "@/lib/widgets";
+import { enqueue } from "@/lib/queue";
+import { autoCrawl } from "@/lib/ingest/web";
 
 // Step 1: business profile. Step 2: first widget. Step 3: install (client only, nothing to save).
 export const POST = handle(async (req: Request) => {
@@ -43,5 +45,7 @@ export const POST = handle(async (req: Request) => {
     return created.id;
   });
 
-  return json({ ok: true, widgetId, next: `/app/widgets/${widgetId}?tab=install` });
+  // auto-crawl homepage + policy pages in the background; the onboarding "Done" step lists them live
+  if (website) void enqueue(`crawl:${user.business_id}`, () => autoCrawl(user.business_id, user.plan, website));
+  return json({ ok: true, widgetId, crawling: Boolean(website), next: `/app/widgets/${widgetId}?tab=install` });
 });

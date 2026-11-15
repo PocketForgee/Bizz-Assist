@@ -11,7 +11,7 @@ export const metadata: Metadata = { title: "Train" };
 export default async function TrainPage() {
   const user = await requirePageUser({ owner: true });
   const items = await sql<QaRow[]>`
-    select id, title as question, content as answer, source, updated_at from knowledge_items
+    select id, title as question, content as answer, alternatives, source, updated_at from knowledge_items
     where business_id = ${user.business_id} and source in ('qa', 'learned')
     order by updated_at desc
   `;

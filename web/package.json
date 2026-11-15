@@ -12,17 +12,20 @@
   },
   "dependencies": {
     "@google/genai": "^3.3.0",
+    "@mozilla/readability": "^0.6.0",
     "@nexconn/chat": "^26.2.1",
     "@nexconn/chatui": "^26.2.5",
     "@nexconn/engine": "^26.2.1",
     "clsx": "^2.1.1",
+    "linkedom": "^0.18.15",
     "lucide-react": "^1.73.0",
     "next": "16.4.6",
     "postgres": "^4.1.1",
     "qrcode": "^1.5.4",
     "react": "19.3.0",
     "react-dom": "19.3.0",
-    "tailwind-merge": "^3.7.0"
+    "tailwind-merge": "^3.7.0",
+    "unpdf": "^1.9.1"
   },
   "devDependencies": {
     "@tailwindcss/turbopack": "4.3.3",
