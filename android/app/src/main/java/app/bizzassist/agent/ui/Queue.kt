@@ -199,7 +199,7 @@ private fun LiveDot() {
     val ring by t.animateFloat(1f, 2.2f, infiniteRepeatable(tween(1600, easing = Bz.Ease), RepeatMode.Restart), label = "ring")
     val fade by t.animateFloat(0.35f, 0f, infiniteRepeatable(tween(1600, easing = Bz.Ease), RepeatMode.Restart), label = "fade")
     Box(Modifier.size(16.dp), contentAlignment = Alignment.Center) {
-        Box(Modifier.size(8.dp).scale(ring).alpha(fade).clip(CircleShape).background(Bz.Warning))
-        Dot(Bz.Warning)
+        Box(Modifier.size(8.dp).scale(ring).alpha(fade).clip(CircleShape).background(Bz.Sand))
+        Dot(Bz.Sand)
     }
 }

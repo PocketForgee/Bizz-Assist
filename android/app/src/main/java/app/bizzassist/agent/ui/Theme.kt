@@ -43,21 +43,27 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** Same tokens as the web app: graphite surfaces, three text roles, one deep-green accent. */
+/** Same tokens as the web app: charcoal-tinted surfaces, three text roles, one teal accent. */
 object Bz {
-    val Primary = Color(0xFF0F6E56)
-    val PrimarySoft = Color(0xFFE7F2EE)
-    val Ink = Color(0xFF171717)
-    val Ink80 = Color(0xFF525252)
-    val Ink48 = Color(0xFF6F6F6F)
+    val Primary = Color(0xFF217A70)
+    val PrimarySoft = Color(0xFFE3F2F0)
+    val Ink = Color(0xFF264653)
+    val Ink80 = Color(0xFF4A6470)
+    val Ink48 = Color(0xFF5F737C)
     val Canvas = Color(0xFFFFFFFF)
-    val Pearl = Color(0xFFFAFAFA)
-    val Raised = Color(0xFFF4F4F5)
-    val Hairline = Color(0x1A171717)
-    val Divider = Color(0x0F171717)
-    val Danger = Color(0xFFC62828)
-    val Success = Color(0xFF15803D)
-    val Warning = Color(0xFFA14B06)
+    val Pearl = Color(0xFFF7F9F9)
+    val Raised = Color(0xFFEEF3F3)
+    val Hairline = Color(0x21264653)
+    val Divider = Color(0x12264653)
+    val Danger = Color(0xFFC4472B)
+    val Success = Color(0xFF217A70)
+    val Warning = Color(0xFFB0611C)
+
+    // the palette as given; Teal/Sand/Saffron/Sienna fill dots and highlights, never text on white
+    val Teal = Color(0xFF2A9D8F)
+    val Saffron = Color(0xFFE9C46A)
+    val Sand = Color(0xFFF4A261)
+    val Sienna = Color(0xFFE76F51)
 
     /** One easing curve everywhere (same as the web: cubic-bezier(0.22, 1, 0.36, 1)). */
     val Ease = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)

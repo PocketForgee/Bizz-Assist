@@ -21,7 +21,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -87,10 +93,11 @@ fun ChatScreen(
         if (messages.isNotEmpty()) list.animateScrollToItem(messages.size)
     }
 
-    Column(Modifier.fillMaxSize().background(Bz.Pearl).safeDrawingPadding().imePadding()) {
+    // status-bar area takes the top bar colour, nav-bar area the composer colour, so the system bars never float on a mismatched band
+    Column(Modifier.fillMaxSize().background(Bz.Pearl).windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))) {
         // ---- top bar ----
         Row(
-            Modifier.fillMaxWidth().height(64.dp).background(Bz.Canvas).padding(start = 4.dp, end = 12.dp),
+            Modifier.fillMaxWidth().background(Bz.Canvas).statusBarsPadding().height(64.dp).padding(start = 4.dp, end = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Box(
@@ -187,6 +194,7 @@ fun ChatScreen(
         }
 
         // ---- composer / state line ----
+        Column(Modifier.fillMaxWidth().background(Bz.Canvas).navigationBarsPadding().imePadding()) {
         Box(Modifier.fillMaxWidth().height(1.dp).background(Bz.Hairline))
         if (mine) {
             Row(
@@ -242,6 +250,7 @@ fun ChatScreen(
                 color = Bz.Ink48,
                 modifier = Modifier.fillMaxWidth().background(Bz.Canvas).padding(horizontal = 20.dp, vertical = 16.dp),
             )
+        }
         }
     }
 
