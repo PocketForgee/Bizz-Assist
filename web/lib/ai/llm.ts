@@ -32,7 +32,8 @@ export async function askLLM(opts: {
   const genai = ai();
   if (!genai) return { ok: false, reason: "not_configured", detail: "LLM_API_KEY is not set" };
 
-  for (let attempt = 0; attempt < 2; attempt++) {
+  const TRIES = 3;
+  for (let attempt = 0; attempt < TRIES; attempt++) {
     try {
       const res = await genai.models.generateContent({
         model: opts.model,
@@ -55,8 +56,9 @@ export async function askLLM(opts: {
       };
     } catch (err) {
       const status = err instanceof ApiError ? err.status : 0;
-      if (status === 429 && attempt === 0) {
-        await sleep(1500 + Math.random() * 1000);
+      // rate limits and "high demand" overloads are usually gone a few seconds later
+      if ((status === 429 || status === 500 || status === 503) && attempt < TRIES - 1) {
+        await sleep((attempt + 1) * 2000 + Math.random() * 1000);
         continue;
       }
       console.error("[llm] call failed", status, err instanceof Error ? err.message : err);
