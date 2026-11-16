@@ -5,6 +5,7 @@ import { nxId } from "./ids";
 import { enqueue } from "./queue";
 import { issueToken, joinGroup, sendGroupText } from "./nexconn";
 import { learnFromConversation } from "./ai/learn";
+import { inBuyerLanguage } from "./ai/translate";
 import type { SessionUser } from "./auth";
 
 export type QueueRow = {
@@ -30,6 +31,7 @@ type Actor = Pick<SessionUser, "id" | "business_id" | "name" | "nx_user_id" | "r
 async function botNote(businessId: string, conversationId: string, groupId: string, text: string) {
   const bot = nxId.bot(businessId);
   try {
+    text = await inBuyerLanguage(conversationId, text);
     const msgId = await sendGroupText(bot, groupId, text);
     await sql`
       insert into messages (nx_message_id, conversation_id, sender_role, sender_nx_id, text)

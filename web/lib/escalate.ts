@@ -2,6 +2,7 @@ import { sql } from "./db";
 import { nxId } from "./ids";
 import { sendGroupText, sendSystemText } from "./nexconn";
 import { summarizeConversation } from "./ai/summarize";
+import { inBuyerLanguage } from "./ai/translate";
 
 export type EscalationReason = "keyword" | "tool" | "llm_error" | "plan_limit" | "no_info";
 
@@ -26,10 +27,10 @@ export async function escalate(conversationId: string, reason: EscalationReason,
   `;
 
   const lead = (messageToCustomer || HANDOFF_DEFAULT).trim();
-  const text = position > 1 ? `${lead} You're number ${position} in line.` : `${lead} You're next in line.`;
   const bot = nxId.bot(conv.business_id);
 
   try {
+    const text = await inBuyerLanguage(conv.id, position > 1 ? `${lead} You're number ${position} in line.` : `${lead} You're next in line.`);
     const msgId = await sendGroupText(bot, conv.nx_group_id, text);
     await sql`
       insert into messages (nx_message_id, conversation_id, sender_role, sender_nx_id, text)
