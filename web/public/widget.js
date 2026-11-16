@@ -41,7 +41,9 @@
 
   function fullScreenOnPhone() {
     var phone = window.innerWidth < 480;
+    // clearing the inset shorthand also clears bottom/left/right, so set the desktop corner again
     panel.style.inset = phone ? "0" : "";
+    if (!phone) { panel.style.bottom = "88px"; panel.style[side] = "20px"; }
     panel.style.width = phone ? "100%" : "380px";
     panel.style.height = phone ? "100%" : "600px";
     panel.style.maxHeight = phone ? "none" : "calc(100vh - 108px)";
