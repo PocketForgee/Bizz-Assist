@@ -39,6 +39,7 @@ services:
       - "443:443"
     environment:
       DOMAIN: ${DOMAIN}
+      OLD_DOMAIN: ${OLD_DOMAIN:-137-23-61-46.sslip.io}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data

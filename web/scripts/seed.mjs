@@ -8,8 +8,8 @@ import { randomBytes, randomUUID, scrypt as scryptCb } from "node:crypto";
 import { promisify } from "node:util";
 
 const scrypt = promisify(scryptCb);
-const OWNER_EMAIL = "owner@demo.bizzassist.app";
-const AGENT_EMAIL = "agent@demo.bizzassist.app";
+const OWNER_EMAIL = "owner@bizzassist.biz";
+const AGENT_EMAIL = "agent@bizzassist.biz";
 
 const appUrl = (process.env.APP_URL ?? "").replace(/\/$/, "");
 if (!/^https:\/\//.test(appUrl)) console.warn("[seed] APP_URL is not https: the order lookup action fails its URL check until it is.");

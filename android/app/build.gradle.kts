@@ -25,7 +25,7 @@ android {
         versionCode = 2
         versionName = "2.0"
 
-        val apiBase = localProp("bizzassist.apiBaseUrl", "https://137-23-61-46.sslip.io/").let { if (it.endsWith("/")) it else "$it/" }
+        val apiBase = localProp("bizzassist.apiBaseUrl", "https://bizzassist.biz/").let { if (it.endsWith("/")) it else "$it/" }
         buildConfigField("String", "API_BASE_URL", "\"$apiBase\"")
     }
 

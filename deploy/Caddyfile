@@ -1,5 +1,16 @@
-# Automatic HTTPS for $DOMAIN (e.g. 137-23-61-46.sslip.io until a real domain exists).
+# Automatic HTTPS for $DOMAIN (bizzassist.biz). Caddy gets and renews the certificates itself.
 {$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy web:3000
+}
+
+www.{$DOMAIN} {
+	redir https://{$DOMAIN}{uri} permanent
+}
+
+# The address used before the real domain. Kept as a full alias, not a redirect, so widget snippets
+# already pasted on shops and the Nexconn webhook (a POST, which redirects can break) keep working.
+{$OLD_DOMAIN:137-23-61-46.sslip.io} {
 	encode zstd gzip
 	reverse_proxy web:3000
 }
