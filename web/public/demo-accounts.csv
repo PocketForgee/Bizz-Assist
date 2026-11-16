@@ -1,0 +1,9 @@
+account_id,email,plan,status,renews_on
+BA-1001,maya@example.com,Free,Active,
+BA-1002,ravi@example.com,Pro,Active,2026-12-02
+BA-1003,lucia@example.com,Pro,Payment failed,2026-11-20
+BA-1004,sam@example.com,Business,Active,2027-01-15
+BA-1005,amira@example.com,Pro,Cancelled,
+BA-1006,kenji@example.com,Free,Active,
+BA-1007,ana@example.com,Business,Active,2026-11-30
+BA-1008,omar@example.com,Pro,Trial,2026-11-23

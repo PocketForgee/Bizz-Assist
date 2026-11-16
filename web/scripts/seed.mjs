@@ -12,7 +12,7 @@ const OWNER_EMAIL = "owner@bizzassist.biz";
 const AGENT_EMAIL = "agent@bizzassist.biz";
 
 const appUrl = (process.env.APP_URL ?? "").replace(/\/$/, "");
-if (!/^https:\/\//.test(appUrl)) console.warn("[seed] APP_URL is not https: the order lookup action fails its URL check until it is.");
+if (!/^https:\/\//.test(appUrl)) console.warn("[seed] APP_URL is not https: the account lookup action fails its URL check until it is.");
 
 const sql = postgres(process.env.DATABASE_URL ?? "postgres://bizzassist:bizzassist@localhost:5432/bizzassist", { max: 1 });
 const hex = (uuid) => uuid.replace(/-/g, "");
@@ -26,45 +26,30 @@ async function hashPassword(pw) {
 
 const QA = [
   {
-    q: "How long does delivery take?",
-    alts: ["when will my order arrive", "shipping time", "how many days for delivery"],
-    a: "We ship within 1–2 business days. Delivery takes 3–5 business days in the US, 5–8 days to Europe and India, and up to 10 days elsewhere. You get a tracking link by email as soon as your order ships.",
+    q: "How do I add the chat to my website?",
+    alts: ["install the widget", "embed code", "add BizzAssist to my site"],
+    a: "Open Widgets, pick your widget and go to Install. Paste the one-line script tag into your site's HTML. You also get a chat link and a QR code you can share without a website.",
   },
   {
-    q: "What is your return policy?",
-    alts: ["can I return an item", "refund policy", "how do I send something back"],
-    a: "You can return unused items within 30 days of delivery for a full refund. Start a return from the link in your delivery email. Return shipping is free in the US; elsewhere it is deducted from the refund. Refunds reach your card 5–7 days after we receive the item.",
+    q: "What does each plan include?",
+    alts: ["plans and limits", "free plan limits", "what do I get on Pro"],
+    a: "Free: 1 widget, 1 person answering, 20 website pages, 50 Q&A entries, 1 API action and 300 AI replies a month. Pro: 5 widgets, 5 people, 300 pages, 1,000 Q&A, 10 actions and 5,000 AI replies. Business: 25 widgets, 50 people, 3,000 pages, 10,000 Q&A, 50 actions and 50,000 AI replies.",
   },
   {
-    q: "Do you ship internationally?",
-    alts: ["do you deliver to India", "shipping to Europe", "international orders"],
-    a: "Yes, we ship to over 40 countries, including India, the UK, the EU, the UAE and Australia. Duties and taxes are shown at checkout, so there is nothing extra to pay on delivery.",
+    q: "Which languages does it support?",
+    alts: ["can it answer in Hindi", "multilingual support", "agent languages"],
+    a: "The assistant answers buyers in the language they write in. Agents pick one of English, Hindi, Spanish, Arabic, French, German, Portuguese or Indonesian, and chats are translated both ways between the agent and the buyer.",
   },
   {
-    q: "Which payment methods do you accept?",
-    alts: ["can I pay with UPI", "do you take PayPal", "payment options"],
-    a: "We accept Visa, Mastercard, American Express, PayPal, Apple Pay, Google Pay and UPI (India only).",
-  },
-  {
-    q: "How do I wash linen and cotton items?",
-    alts: ["care instructions", "can I machine wash the throw"],
-    a: "Machine wash cold on a gentle cycle with mild detergent, then line dry or tumble dry low. Wool blankets are dry clean only. Every item also has a care label.",
-  },
-  {
-    q: "Can I change or cancel my order?",
-    alts: ["cancel order", "change shipping address", "edit my order"],
-    a: "You can change or cancel an order until it ships, usually within 24 hours. Message us with your order ID and we'll update it. Once it has shipped, you can return it instead.",
-  },
-  {
-    q: "Do you offer gift wrapping?",
-    alts: ["gift wrap", "can you add a gift note"],
-    a: "Yes. Choose gift wrapping at checkout for $5 per order and add a free handwritten note. Prices are left off the packing slip.",
+    q: "What can I train the assistant on?",
+    alts: ["knowledge sources", "can I upload a PDF", "train the bot"],
+    a: "Your website pages or sitemap, documents (PDF or text up to 10 MB), Q&A entries with other ways of asking, API actions such as an order or account lookup from a Google Sheet or REST API, and answers your team gave that you approved.",
   },
 ];
 
 const ACTION_DESCRIPTION =
-  "Look up an order's status, carrier, tracking number and expected delivery date. " +
-  "Needs the order ID (like LL-1002) and the email or phone on the order.";
+  "Look up a BizzAssist account's plan, status and renewal date. " +
+  "Needs the account ID (like BA-1002) and the email on the account.";
 
 async function main() {
   const reset = process.argv.includes("--reset");
@@ -85,8 +70,8 @@ async function main() {
   await sql.begin(async (tx) => {
     if (existing) await tx`delete from businesses where id = ${existing.business_id}`;
     await tx`
-      insert into businesses (id, name, category, default_lang, support_hours, plan, onboarded_at)
-      values (${businessId}, 'Lumen & Loom', 'handmade linen and home goods', 'en', 'Mon–Sat 09:00–18:00 (UTC)', 'pro', now())
+      insert into businesses (id, name, category, website, default_lang, support_hours, plan, onboarded_at)
+      values (${businessId}, 'BizzAssist', 'software / SaaS', 'https://bizzassist.biz', 'en', 'Mon–Fri 09:00–18:00 (IST)', 'free', now())
     `;
     await tx`
       insert into users (id, business_id, email, pass_hash, name, role, lang, nx_user_id) values
@@ -95,14 +80,14 @@ async function main() {
     `;
     await tx`
       insert into api_actions (id, business_id, name, description, kind, method, url_template, params, sheet_match)
-      values (${actionId}, ${businessId}, 'Order lookup', ${ACTION_DESCRIPTION}, 'sheet', 'GET',
-              ${`${appUrl}/demo-orders.csv`}, ${tx.json([])}, ${tx.json({ order_column: "order_id", contact_column: "email" })})
+      values (${actionId}, ${businessId}, 'Account lookup', ${ACTION_DESCRIPTION}, 'sheet', 'GET',
+              ${`${appUrl}/demo-accounts.csv`}, ${tx.json([])}, ${tx.json({ order_column: "account_id", contact_column: "email" })})
     `;
     await tx`
-      insert into widgets (id, business_id, name, color, title, greeting, languages, persona, enabled_action_ids)
-      values (${widgetId}, ${businessId}, 'Website chat', '#217a70', 'Lumen & Loom',
-              'Hi! Ask me about orders, delivery or returns.', ${["en", "es", "hi"]},
-              'Warm and brief. No emojis.', ${[actionId]})
+      insert into widgets (id, business_id, name, color, title, greeting, languages, persona, allowed_domains, escalation_keywords, enabled_action_ids)
+      values (${widgetId}, ${businessId}, 'Website chat', '#217a70', 'BizzAssist',
+              'Hi! Ask me anything about BizzAssist: setup, plans or your account.', ${["en"]},
+              'Warm and brief. No emojis.', ${["bizzassist.biz"]}, ${["refund", "human", "agent"]}, ${[actionId]})
     `;
     for (const item of QA) {
       await tx`
@@ -114,12 +99,12 @@ async function main() {
 
   console.log(
     [
-      "[seed] Lumen & Loom created.",
+      "[seed] BizzAssist demo business created.",
       `  Owner : ${OWNER_EMAIL}`,
       `  Agent : ${AGENT_EMAIL}`,
       `  Password (both): ${password}`,
       `  Buyer chat: ${appUrl || "<APP_URL>"}/w/${widgetId}`,
-      '  Try: "Where is my order LL-1002? My email is arjun@example.com"',
+      '  Try: "What is the status of account BA-1002? My email is ravi@example.com"',
     ].join("\n"),
   );
 }

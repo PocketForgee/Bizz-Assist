@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import type { CSSProperties } from "react";
 import { ArrowRightIcon, ArrowUpRightIcon, PackageIcon, PlusIcon, SealCheckIcon, ShieldCheckIcon, TranslateIcon } from "@phosphor-icons/react/ssr";
 import { PLAN_LABEL, PLAN_LIMITS, type Plan } from "@/lib/plans";
@@ -246,19 +247,19 @@ export default function Home() {
           <div className="mx-auto grid max-w-[1240px] items-center gap-10 px-6 py-20 md:px-10 md:py-24 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <div data-reveal className="max-w-[680px]">
               <p className="t-mono text-paper-ink-2">See it work</p>
-              <h2 className="heading-4 mt-3 text-paper-ink lg:heading-3">Chat with a shop that runs on it</h2>
+              <h2 className="heading-4 mt-3 text-paper-ink lg:heading-3">Chat with our own support</h2>
               <p className="body-3 mt-4 text-paper-ink-2">
-                Lumen &amp; Loom is a demo homeware shop running on BizzAssist. Ask it anything a customer would. Ask for a person and the chat goes to its team.
+                BizzAssist answers its own customers with BizzAssist. Ask about setup, plans or a demo account. Ask for a person and the chat goes to our team.
               </p>
               <Link
                 href="/demo"
                 className="press button-md mt-8 inline-flex items-center gap-2 rounded-lg border border-paper-ink/15 bg-white px-3 py-2 text-paper-ink hover:bg-paper-raised"
               >
-                Open the demo shop chat <ArrowUpRightIcon size={16} aria-hidden />
+                Open the support chat <ArrowUpRightIcon size={16} aria-hidden />
               </Link>
             </div>
             <ul data-reveal style={d(120)} className="flex flex-col gap-3">
-              {["Do you deliver to Spain, and how long does it take?", "Where is my order LL‑1002? My email is arjun@example.com", "Can I return a cushion cover I've already used?"].map((q) => (
+              {["How do I add the chat to my website?", "What is the status of account BA‑1002? My email is ravi@example.com", "¿Mis agentes pueden responder en español?"].map((q) => (
                 <li key={q} className="body-5 flex items-start gap-3 rounded-xl border border-paper-ink/10 bg-white/70 px-4 py-3 text-paper-ink">
                   <span className="slip mt-0.5 shrink-0 text-paper-ink-2">Try</span>
                   {q}
@@ -377,6 +378,7 @@ export default function Home() {
           </div>
         </section>
       </main>
+      <Script src="/demo-widget.js" strategy="afterInteractive" />
 
       <footer className="relative z-10 bg-paper-ink text-paper">
         <div className="caption-2 mx-auto flex max-w-[1240px] flex-wrap items-center justify-between gap-4 border-t border-paper/10 px-6 py-8 text-paper/60 md:px-10">
