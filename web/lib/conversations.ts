@@ -28,10 +28,10 @@ export type QueueRow = {
 type Actor = Pick<SessionUser, "id" | "business_id" | "name" | "nx_user_id" | "role">;
 
 /** Bot-voiced status line into the buyer's chat, stored like any bot message. */
-async function botNote(businessId: string, conversationId: string, groupId: string, text: string) {
+async function botNote(businessId: string, conversationId: string, groupId: string, text: string, name?: string) {
   const bot = nxId.bot(businessId);
   try {
-    text = await inBuyerLanguage(conversationId, text);
+    text = await inBuyerLanguage(conversationId, text, name);
     const msgId = await sendGroupText(bot, groupId, text);
     await sql`
       insert into messages (nx_message_id, conversation_id, sender_role, sender_nx_id, text)
@@ -72,7 +72,7 @@ export async function claimConversation(user: Actor, conversationId: string): Pr
     throw new HttpError(502, "Couldn't join the chat. Try again.");
   }
   const first = user.name.split(/\s+/)[0] || "An agent";
-  await botNote(user.business_id, conv.id, conv.nx_group_id, `${first} from our team has joined the chat.`);
+  await botNote(user.business_id, conv.id, conv.nx_group_id, "{name} from our team has joined the chat.", first);
   return { nx_group_id: conv.nx_group_id };
 }
 

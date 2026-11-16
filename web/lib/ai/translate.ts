@@ -42,24 +42,23 @@ export async function translate(text: string, to: string): Promise<{ source: str
 }
 
 /** Status notes (handover, agent joined, closed) are written in English; this puts one in the language the buyer last wrote in. */
-export async function inBuyerLanguage(conversationId: string, note: string): Promise<string> {
+/** `name` fills a {name} placeholder after translation, so a person's name is never translated. */
+export async function inBuyerLanguage(conversationId: string, note: string, name?: string): Promise<string> {
+  const fill = (t: string) => (name ? t.replace("{name}", name) : t);
   const [m] = await sql<{ text: string }[]>`
     select text from messages where conversation_id = ${conversationId} and sender_role = 'buyer' order by created_at desc limit 1
   `;
-  if (!m) return note;
+  if (!m) return fill(note);
   const res = await askLLM({
     model: MODEL_LITE(),
     system:
-      "You localize short customer-support status notes. Rewrite the NOTE in the language of the CUSTOMER MESSAGE, keeping names unchanged. " +
+      "You localize short customer-support status notes. Rewrite the NOTE in the language of the CUSTOMER MESSAGE. Keep the {name} placeholder exactly as written. " +
       "If the note is already in that language, return it unchanged. Return only the note, with no quotes.",
-    contents: [{ role: "user", parts: [{ text: `CUSTOMER MESSAGE:
-${m.text.slice(0, 500)}
-
-NOTE:
-${note}` }] }],
+    contents: [{ role: "user", parts: [{ text: `CUSTOMER MESSAGE:\n${m.text.slice(0, 500)}\n\nNOTE:\n${note}` }] }],
     temperature: 0,
   });
-  return res.ok && res.text.trim() ? res.text.trim().slice(0, 600) : note;
+  const out = res.ok ? res.text.trim().slice(0, 600) : "";
+  return fill(out && (!name || out.includes("{name}")) ? out : note);
 }
 
 /**
