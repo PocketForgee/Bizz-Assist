@@ -83,11 +83,13 @@ export function toContents(turns: ChatTurn[]): Content[] {
 
 /** Pulls [S#] citations out of the model text. Returns clean text for the buyer and the cited items. */
 export function extractCitations(text: string, used: KbItem[]): { clean: string; cited: KbItem[] } {
+  // [S1], [S2][S4] and grouped [S2, S4] / [S2、S4]
+  const group = /\s*\[\s*S\d+(?:\s*[,，、]\s*S?\d+)*\s*\]/g;
   const nums = new Set<number>();
-  for (const m of text.matchAll(/\[S(\d+)\]/g)) nums.add(Number(m[1]));
+  for (const m of text.matchAll(group)) for (const d of m[0].matchAll(/\d+/g)) nums.add(Number(d[0]));
   const cited = [...nums].map((n) => used[n - 1]).filter((x): x is KbItem => Boolean(x));
   const clean = text
-    .replace(/\s*\[S\d+\](?:\s*\[S\d+\])*/g, "")
+    .replace(group, "")
     .replace(/[ \t]+\n/g, "\n")
     .trim();
   return { clean, cited };

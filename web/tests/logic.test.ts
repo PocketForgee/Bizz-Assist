@@ -66,6 +66,12 @@ test("citations are stripped from buyer text and mapped to items", () => {
   assert.deepEqual(cited.map((c) => c.id), ["1", "2"]);
 });
 
+test("grouped citations are stripped too", () => {
+  const { clean, cited } = extractCitations("El plan Pro incluye 5,000 respuestas [S2, S1]. はい [S1、S2]。", kb);
+  assert.equal(clean, "El plan Pro incluye 5,000 respuestas. はい。");
+  assert.deepEqual(cited.map((c) => c.id).sort(), ["1", "2"]);
+});
+
 test("escalation keywords match whole words only, any script", () => {
   assert.equal(matchesKeyword("I want a HUMAN please", ["human"]), true);
   assert.equal(matchesKeyword("humane society", ["human"]), false);
