@@ -1,44 +1,177 @@
+<div align="center">
+
+<img src=".github/readme/logo.svg" width="96" alt="BizzAssist logo" />
+
 # BizzAssist
 
-AI customer support for small online businesses, built on Nexconn Chat.
+### **Support chat that learns your shop.**
 
-A business signs up, adds a chat widget to its website and teaches it from its own pages, documents, Q&A and live order lookups. Customers chat with the assistant in any language. When the assistant can't help, the chat goes to a person on the team, on the web or in the Android agent app. The answers that person gives become new knowledge for the assistant once the owner approves them.
+AI customer support for small online businesses, built on **Nexconn Chat**.
+It answers from your own website, documents and live order data, in your customer's language.
+When it can't help, a person on your team takes over in the same chat, and what they answer becomes new knowledge.
 
-Live at [bizzassist.biz](https://bizzassist.biz). Public usage numbers: [bizzassist.biz/stats](https://bizzassist.biz/stats).
+<br />
 
-Built for the Nexconn Build Challenge 2026, Marketplace & Support track.
+[![Live](https://img.shields.io/badge/live-bizzassist.biz-217a70?style=for-the-badge&labelColor=264653)](https://bizzassist.biz)
+[![Stats](https://img.shields.io/badge/usage-live_stats-e76f51?style=for-the-badge&labelColor=264653)](https://bizzassist.biz/stats)
+[![Android](https://img.shields.io/badge/Android-agent_APK-3ddc84?style=for-the-badge&logo=android&logoColor=white&labelColor=264653)](BizzAssist-Agent.apk)
+[![Nexconn](https://img.shields.io/badge/built_on-Nexconn_Chat-5cc2b5?style=for-the-badge&labelColor=264653)](#-how-bizzassist-uses-nexconn)
 
-## Features
+<br />
 
-**Training from several sources**
-- Website pages, added one by one or from a sitemap. Onboarding crawls the homepage, the policy pages and the top sitemap entries on its own.
-- Documents: PDF, TXT, Markdown or pasted text.
-- Q&A pairs with alternative phrasings.
-- API actions: the assistant can look up an order or an account through a REST endpoint (headers encrypted at rest) or a Google Sheet. A sheet lookup always asks for two keys, such as order ID and email, so one customer can't read another's data.
+![Next.js](https://img.shields.io/badge/Next.js_16-000?style=flat-square&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React_19-000?style=flat-square&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-000?style=flat-square&logo=typescript&logoColor=3178C6)
+![Tailwind](https://img.shields.io/badge/Tailwind_4-000?style=flat-square&logo=tailwindcss&logoColor=38BDF8)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL_16-000?style=flat-square&logo=postgresql&logoColor=4169E1)
+![Kotlin](https://img.shields.io/badge/Kotlin-000?style=flat-square&logo=kotlin&logoColor=7F52FF)
+![Jetpack Compose](https://img.shields.io/badge/Jetpack_Compose-000?style=flat-square&logo=jetpackcompose&logoColor=4285F4)
+![Docker](https://img.shields.io/badge/Docker_Compose-000?style=flat-square&logo=docker&logoColor=2496ED)
+![Caddy](https://img.shields.io/badge/Caddy-000?style=flat-square&logo=caddy&logoColor=1F88C0)
 
-**Self-learning loop**
-- When an agent resolves a chat, the answers they gave are turned into suggested knowledge.
-- The owner approves, edits or rejects each suggestion. Approved answers are used in the next chats, and the Playground shows which source an answer came from.
+<br />
 
-**Simple to install**
-- One script tag puts the chat launcher on any site. The widget takes the brand colour, title, greeting and logo, and can be limited to the business's own domains.
-- Every widget also has a direct chat link and a QR code, for shops without a website.
+<img src=".github/readme/landing.jpg" width="880" alt="BizzAssist landing page" />
 
-**Multilingual**
-- The assistant answers in the language the customer writes in.
-- When the customer and the agent speak different languages, each message is translated for the reader. The original stays as written.
-- Handover and status notes reach the customer in their own language.
+<sub>Built for the <b>Nexconn Build Challenge 2026</b> · Marketplace & Support track</sub>
 
-**Human handover**
-- The chat goes to a person when the customer asks for one, when the knowledge doesn't cover the question, or when the model fails.
-- Agents get an alert, a short summary of the chat so far and the customer's language. Claiming a chat is atomic, so two agents never take the same one.
-- The customer can rate the chat when it closes.
+</div>
 
-**For the owner**
-- Analytics: share of chats solved by the assistant, average wait for a person, satisfaction, handover reasons, and the questions the assistant couldn't answer, each with a link to add the answer.
-- Team management, Free, Pro and Business plans with their limits, and a Playground to test the assistant before going live.
+<br />
 
-## How BizzAssist uses Nexconn
+---
+
+## ✦ Why BizzAssist
+
+A small online shop answers the same questions every day: where is my order, can I return this, do you ship to my city. Chatbots that only follow a script frustrate customers, and a full support team costs too much.
+
+BizzAssist sits in between. The assistant answers from the shop's own information and shows where each answer came from. It hands the chat to a person when it should, and it learns from the answers that person gives, so each handover makes the next one less likely.
+
+<br />
+
+## ✦ See it work
+
+<table>
+<tr>
+<td width="42%" valign="top"><img src=".github/readme/languages.gif" alt="Customers asking in six languages" /><br /><sub><b>Any language</b>: Hindi, Arabic, Spanish, French, Japanese and Indonesian, each answered in kind from the same knowledge</sub></td>
+<td width="58%" valign="top"><img src=".github/readme/handover.gif" alt="Agent handover with live translation" /><br /><sub><b>Handover</b>: a Spanish-speaking customer asks for a person. The agent gets a summary, reads a translation and replies in English</sub></td>
+</tr>
+</table>
+
+<br />
+
+## ✦ Features
+
+| | |
+|---|---|
+| 🌐 **Learns from your website** | Add pages one by one or from a sitemap. Onboarding crawls the homepage, the policy pages and the top sitemap entries on its own. |
+| 📄 **Documents and Q&A** | Upload PDF, TXT or Markdown, paste text, or write Q&A pairs with the other ways customers ask the same thing. |
+| 🔎 **Live lookups** | API actions let the assistant check an order or an account through a REST endpoint (headers encrypted at rest) or a Google Sheet. A sheet lookup always asks for two keys, such as order ID and email, so one customer can't read another's data. |
+| 🧪 **Playground** | Test the assistant before going live. Every answer shows the sources it came from. |
+| 🗣️ **Every language** | The assistant answers in the language the customer writes in. Handover and status notes arrive in that language too. |
+| 🙋 **Human handover** | The chat goes to a person when the customer asks for one, when the knowledge doesn't cover the question, or when the model fails. Agents get an alert, a short summary and the customer's language. |
+| 🔁 **Live translation** | When the customer and the agent speak different languages, each message is translated for its reader. The original stays as written. |
+| ✅ **Atomic claims** | Claiming a chat is a single database update, so two agents never take the same one. |
+| 🧠 **Self-learning** | When an agent resolves a chat, their answers become suggestions. The owner approves, edits or rejects each one; approved answers are used in the next chats. |
+| 🧩 **One-line install** | One script tag adds the launcher to any site, in the brand colour, with its own title, greeting and logo, limited to the business's domains. Every widget also has a direct link and a QR code. |
+| 📊 **Analytics** | Share of chats solved by the assistant, average wait for a person, satisfaction, handover reasons, and the questions it couldn't answer, each with a link to add the answer. |
+| 📱 **Android agent app** | Native Kotlin and Jetpack Compose app for agents: Waiting and Mine queues, claim, reply with translations, resolve, and a notification for each new waiting chat. |
+| 👥 **Teams and plans** | Invite agents with one-time passwords. Free, Pro and Business plans with their limits. |
+
+<br />
+
+## ✦ Screens
+
+<table>
+<tr>
+<td width="50%"><img src=".github/readme/train.jpg" alt="Train" /><br /><sub><b>Train</b>: website pages, documents, Q&A, API actions and learned answers in one place</sub></td>
+<td width="50%"><img src=".github/readme/api-action.jpg" alt="API action" /><br /><sub><b>API actions</b>: connect a Google Sheet and test the lookup before saving</sub></td>
+</tr>
+<tr>
+<td><img src=".github/readme/playground.jpg" alt="Playground" /><br /><sub><b>Playground</b>: try the assistant and see why it answered</sub></td>
+<td><img src=".github/readme/widget-editor.jpg" alt="Widget editor" /><br /><sub><b>Widget editor</b>: colour, greeting and behaviour with a live preview</sub></td>
+</tr>
+<tr>
+<td><img src=".github/readme/agent-inbox.jpg" alt="Agent inbox" /><br /><sub><b>Agent inbox</b>: summary, customer language and translations side by side</sub></td>
+<td><img src=".github/readme/learned.jpg" alt="Learned answers" /><br /><sub><b>Learned</b>: an agent's answer waiting for the owner's approval</sub></td>
+</tr>
+<tr>
+<td><img src=".github/readme/analytics.jpg" alt="Analytics" /><br /><sub><b>Analytics</b>: what the assistant solved and what it couldn't</sub></td>
+<td align="center"><img src=".github/readme/customer-handover.jpg" width="62%" alt="Customer view" /><br /><sub><b>Customer view</b>: the agent's English reply, translated into Spanish</sub></td>
+</tr>
+</table>
+
+<br />
+
+## ✦ Architecture
+
+```mermaid
+flowchart LR
+    subgraph Clients
+        W["Customer chat<br/>widget.js + /w/[id]<br/><b>@nexconn/chat</b>"]
+        D["Owner dashboard<br/>Next.js"]
+        I["Agent inbox<br/>web"]
+        M["Agent app<br/>Android · Compose"]
+    end
+
+    subgraph Nexconn["Nexconn Chat"]
+        G["Group channel<br/>per conversation"]
+        SY["System channel<br/>agent alerts"]
+        WH["Webhook<br/>message:send"]
+    end
+
+    subgraph Server["BizzAssist server · Next.js 16"]
+        API["REST API"]
+        HOOK["Webhook handler<br/>verify · dedupe · queue"]
+        AI["Assistant<br/>knowledge · tools · handover"]
+        TR["Translation<br/>and summaries"]
+        DB[("PostgreSQL 16")]
+    end
+
+    W <-->|"connect · send · receive"| G
+    G --> WH --> HOOK
+    HOOK --> AI
+    HOOK --> TR
+    AI -->|"Platform Chat API<br/>send as bot"| G
+    TR -->|"send to customer only"| G
+    API -->|"tokens · channels · join"| G
+    API --> SY
+    D --> API
+    I --> API
+    M --> API
+    API --> DB
+    HOOK --> DB
+    AI --> DB
+```
+
+A conversation moves through four states. The customer sees each change as a note in the chat.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> bot: customer opens the chat
+    bot --> waiting: asks for a person, or the assistant can't answer
+    waiting --> agent: an agent claims it
+    agent --> closed: the agent resolves it
+    closed --> [*]: customer rates the chat
+```
+
+And this is how the assistant gets smarter:
+
+```mermaid
+flowchart LR
+    Q["Customer asks something<br/>the assistant doesn't know"] --> H["Chat goes to an agent"]
+    H --> R["Agent answers<br/>and resolves"]
+    R --> S["Answer becomes<br/>a suggestion"]
+    S --> O{"Owner reviews"}
+    O -->|approve or edit| K["Added to the<br/>knowledge"]
+    O -->|reject| X["Dropped"]
+    K --> N["Next customer gets<br/>the answer from the assistant"]
+```
+
+<br />
+
+## ✦ How BizzAssist uses Nexconn
 
 Every customer conversation in BizzAssist is a Nexconn group channel. The customer's browser talks to Nexconn through the **Nexconn Chat SDK** (`@nexconn/chat`). The BizzAssist server uses the **Nexconn Platform Chat API** to create users, channels and messages, and receives every new message through a **Nexconn webhook**. The assistant, the customer and the human agent are all real Nexconn users in the same channel.
 
@@ -116,7 +249,9 @@ The webhook handler checks the signature with a timing-safe compare and drops re
 - **Webhooks.** Every customer message arrives signed at one endpoint, and that endpoint drives the AI answers, translations, analytics and the agent inbox.
 - **Data centers.** One setting (`NEXCONN_AREA`: SG, NA or SA) points the SDK and the server at the same region.
 
-## Repository layout
+<br />
+
+## ✦ Repository layout
 
 ```
 web/       Next.js app: landing page, owner dashboard, agent inbox, customer chat, API and Nexconn webhook
@@ -127,11 +262,14 @@ web/       Next.js app: landing page, owner dashboard, agent inbox, customer cha
   tests/     unit tests
 android/   agent app in Kotlin and Jetpack Compose
 deploy/    Docker Compose (Postgres, web, Caddy), deploy, backup and firewall scripts
+.github/   README images
 ```
 
 A prebuilt agent app is at `BizzAssist-Agent.apk`. It connects to bizzassist.biz.
 
-## Tech stack
+<br />
+
+## ✦ Tech stack
 
 - Next.js 16 and React 19, TypeScript, Tailwind CSS 4
 - PostgreSQL 16 through `postgres`
@@ -141,7 +279,9 @@ A prebuilt agent app is at `BizzAssist-Agent.apk`. It connects to bizzassist.biz
 - Android: Kotlin, Jetpack Compose with Material 3, Retrofit, kotlinx.serialization, DataStore
 - Docker Compose and Caddy (automatic HTTPS) on a single Ubuntu server
 
-## Run locally
+<br />
+
+## ✦ Run locally
 
 Needs Node 22 and a Postgres 16 database.
 
@@ -165,7 +305,9 @@ npm run seed        # demo business with an owner and an agent; prints their log
 
 The claim race test needs a throwaway database: `RUN_DB_TESTS=1 DATABASE_URL=postgres://... npm test`.
 
-## Configuration
+<br />
+
+## ✦ Configuration
 
 All settings live in `deploy/.env` (copy `deploy/.env.example`).
 
@@ -180,7 +322,9 @@ All settings live in `deploy/.env` (copy `deploy/.env.example`).
 | `DEMO_PASSWORD` | Optional fixed password for the seeded demo accounts |
 | `STATS_EXCLUDE_BUSINESSES` | Optional comma-separated business ids left out of the public stats page |
 
-## Deploy
+<br />
+
+## ✦ Deploy
 
 The production server runs Ubuntu with Docker and Docker Compose.
 
@@ -195,7 +339,11 @@ Then in the Nexconn console set the webhook URL to `https://<DOMAIN>/api/nexconn
 
 For later updates, run `./deploy.sh` from `deploy/`. It pulls, builds the new image while the old one keeps serving, swaps the containers and waits until the app answers. `backup.sh` takes a nightly database dump; the cron line is at the top of the file.
 
-## Android agent app
+<br />
+
+## ✦ Android agent app
+
+Download the prebuilt app: [`BizzAssist-Agent.apk`](BizzAssist-Agent.apk). It connects to bizzassist.biz.
 
 The app is for the people who answer chats. Sign in with the email and temporary password the owner created in Team, see the Waiting and Mine queues, claim a chat, reply with a translation shown under each customer message, and resolve it. New waiting chats raise a notification.
 
@@ -207,3 +355,13 @@ cd android
 ```
 
 To point it at your own server, copy `local.properties.example` to `local.properties` and set `bizzassist.apiBaseUrl`. More in [android/README.md](android/README.md).
+
+---
+
+<div align="center">
+
+<img src=".github/readme/logo.svg" width="40" alt="" />
+
+<sub><b>BizzAssist</b> · built on Nexconn Chat · <a href="https://bizzassist.biz">bizzassist.biz</a></sub>
+
+</div>
