@@ -14,6 +14,12 @@ val local = Properties().apply {
 }
 fun localProp(key: String, default: String = "") = (local.getProperty(key) ?: default).replace("\"", "")
 
+// Play upload key: keystore.properties (git-ignored) with storeFile, storePassword, keyAlias, keyPassword.
+val keystore = Properties().apply {
+    val f = rootProject.file("keystore.properties")
+    if (f.exists()) f.inputStream().use { load(it) }
+}
+
 android {
     namespace = "app.bizzassist.agent"
     compileSdk = 36
@@ -29,12 +35,21 @@ android {
         buildConfigField("String", "API_BASE_URL", "\"$apiBase\"")
     }
 
+    signingConfigs {
+        if (keystore.isNotEmpty()) create("upload") {
+            storeFile = file(keystore.getProperty("storeFile"))
+            storePassword = keystore.getProperty("storePassword")
+            keyAlias = keystore.getProperty("keyAlias")
+            keyPassword = keystore.getProperty("keyPassword")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // shortcut: release is signed with the debug key so judges can sideload it; add a real signing config before Play.
-            signingConfig = signingConfigs.getByName("debug")
+            // Without keystore.properties the release falls back to the debug key, so anyone can build a sideloadable APK.
+            signingConfig = signingConfigs.findByName("upload") ?: signingConfigs.getByName("debug")
         }
     }
     compileOptions {
