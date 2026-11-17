@@ -12,6 +12,13 @@
   var origin = new URL(script.src).origin;
   var color = script.getAttribute("data-color") || "#217a70";
   var side = script.getAttribute("data-position") === "left" ? "left" : "right";
+  // same rule as onAccent() in components/chat-view.tsx: dark icon on light brand colours
+  var ink = (function (m) {
+    if (!m) return "#fff";
+    var n = parseInt(m[1], 16);
+    var lin = function (c) { var s = c / 255; return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4); };
+    return 0.2126 * lin((n >> 16) & 255) + 0.7152 * lin((n >> 8) & 255) + 0.0722 * lin(n & 255) > 0.45 ? "#111" : "#fff";
+  })(/^#?([0-9a-f]{6})$/i.exec(color));
   var open = false;
   var frame = null;
 
@@ -21,18 +28,20 @@
     '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 
   var btn = document.createElement("button");
+  btn.id = "bizzassist-launcher"; // stable ids so a host page can hide the widget on some screens
   btn.type = "button";
   btn.setAttribute("aria-label", "Open chat");
   btn.setAttribute("aria-expanded", "false");
   btn.innerHTML = chatIcon;
   btn.style.cssText =
     "position:fixed;bottom:20px;" + side + ":20px;width:56px;height:56px;border-radius:50%;border:0;cursor:pointer;" +
-    "display:flex;align-items:center;justify-content:center;color:#fff;background:" + color + ";" +
+    "display:flex;align-items:center;justify-content:center;color:" + ink + ";background:" + color + ";" +
     "box-shadow:0 4px 16px rgba(0,0,0,.18);z-index:2147483646;transition:transform .12s cubic-bezier(.25,.1,.25,1)";
   btn.onmousedown = function () { btn.style.transform = "scale(.95)"; };
   btn.onmouseup = btn.onmouseleave = function () { btn.style.transform = ""; };
 
   var panel = document.createElement("div");
+  panel.id = "bizzassist-panel";
   panel.style.cssText =
     "position:fixed;bottom:88px;" + side + ":20px;width:380px;height:600px;max-height:calc(100vh - 108px);" +
     "max-width:calc(100vw - 40px);border-radius:18px;overflow:hidden;background:#fff;" +
