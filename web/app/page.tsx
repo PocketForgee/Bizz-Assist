@@ -388,6 +388,9 @@ export default function Home() {
           </span>
           <span>Built on Nexconn for the Nexconn Build Challenge 2026</span>
           <nav aria-label="Account" className="flex gap-4">
+            <Link href="/privacy" className="transition-colors duration-300 hover:text-paper">
+              Privacy
+            </Link>
             <Link href="/login" className="transition-colors duration-300 hover:text-paper">
               Sign in
             </Link>
