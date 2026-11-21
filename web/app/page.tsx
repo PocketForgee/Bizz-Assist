@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Script from "next/script";
 import type { CSSProperties } from "react";
-import { ArrowRightIcon, ArrowUpRightIcon, PackageIcon, PlusIcon, SealCheckIcon, ShieldCheckIcon, TranslateIcon } from "@phosphor-icons/react/ssr";
+import { AndroidLogoIcon, ArrowRightIcon, ArrowUpRightIcon, PackageIcon, PlusIcon, SealCheckIcon, ShieldCheckIcon, TranslateIcon } from "@phosphor-icons/react/ssr";
 import { PLAN_LABEL, PLAN_LIMITS, type Plan } from "@/lib/plans";
 import { Mark } from "@/components/brand";
 import { HeroChat, InboxFragment, LoopSlider, PhoneFragment, SourcesFragment } from "@/components/landing";
@@ -125,10 +125,17 @@ export default function Home() {
               It answers your customers from your website, policies and order data. What it can&apos;t answer goes to your team, and every reply they give becomes
               something it knows.
             </p>
-            <div className="mt-8">
+            <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link href="/signup" className="press button-md inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-white hover:bg-primary-focus">
                 Start free <ArrowRightIcon size={16} aria-hidden />
               </Link>
+              <a
+                href="/BizzAssist-Agent.apk"
+                download
+                className="press button-md inline-flex items-center gap-2 rounded-lg border border-paper-ink/20 bg-paper-raised px-3 py-2 text-paper-ink hover:border-paper-ink/40"
+              >
+                <AndroidLogoIcon size={16} aria-hidden /> Download the agent app (APK, 7 MB)
+              </a>
             </div>
             <p className="caption-5 mt-6 flex flex-wrap gap-x-3 gap-y-1 text-paper-ink-2">
               <span>Free plan with {fmt(FREE.aiReplies)} AI replies a month</span>

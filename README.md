@@ -14,7 +14,7 @@ When it can't help, a person on your team takes over in the same chat, and what 
 
 [![Live](https://img.shields.io/badge/live-bizzassist.biz-217a70?style=for-the-badge&labelColor=264653)](https://bizzassist.biz)
 [![Stats](https://img.shields.io/badge/usage-live_stats-e76f51?style=for-the-badge&labelColor=264653)](https://bizzassist.biz/stats)
-[![Android](https://img.shields.io/badge/Android-agent_APK-3ddc84?style=for-the-badge&logo=android&logoColor=white&labelColor=264653)](BizzAssist-Agent.apk)
+[![Android](https://img.shields.io/badge/Android-agent_APK-3ddc84?style=for-the-badge&logo=android&logoColor=white&labelColor=264653)](https://bizzassist.biz/BizzAssist-Agent.apk)
 [![Nexconn](https://img.shields.io/badge/built_on-Nexconn_Chat-5cc2b5?style=for-the-badge&labelColor=264653)](#-how-bizzassist-uses-nexconn)
 
 <br />
@@ -265,7 +265,7 @@ deploy/    Docker Compose (Postgres, web, Caddy), deploy, backup and firewall sc
 .github/   README images
 ```
 
-A prebuilt agent app is at `BizzAssist-Agent.apk`. It connects to bizzassist.biz.
+A prebuilt agent app is at [bizzassist.biz/BizzAssist-Agent.apk](https://bizzassist.biz/BizzAssist-Agent.apk) (also `web/public/BizzAssist-Agent.apk`). It connects to bizzassist.biz.
 
 <br />
 
@@ -316,7 +316,7 @@ All settings live in `deploy/.env` (copy `deploy/.env.example`).
 | `DOMAIN` | Hostname Caddy gets a certificate for |
 | `POSTGRES_PASSWORD` | Database password, letters and digits only |
 | `NEXCONN_APP_KEY`, `NEXCONN_APP_SECRET`, `NEXCONN_AREA` | From the Nexconn console. The area must match the app's data center |
-| `LLM_API_KEY` | Google AI Studio API key |
+| `LLM_API_KEY` | Google AI Studio API key. Several keys, comma separated, rotate when one hits its limit |
 | `LLM_MODEL_MAIN`, `LLM_MODEL_LITE` | Model ids. Main answers customers; lite handles translation, summaries and learning |
 | `APP_ENCRYPTION_KEY` | 64 hex characters, encrypts API action headers |
 | `DEMO_PASSWORD` | Optional fixed password for the seeded demo accounts |
@@ -343,7 +343,7 @@ For later updates, run `./deploy.sh` from `deploy/`. It pulls, builds the new im
 
 ## ✦ Android agent app
 
-Download the prebuilt app: [`BizzAssist-Agent.apk`](BizzAssist-Agent.apk). It connects to bizzassist.biz.
+Download the prebuilt app: [`BizzAssist-Agent.apk`](https://bizzassist.biz/BizzAssist-Agent.apk). It connects to bizzassist.biz.
 
 The app is for the people who answer chats. Sign in with the email and temporary password the owner created in Team, see the Waiting and Mine queues, claim a chat, reply with a translation shown under each customer message, and resolve it. New waiting chats raise a notification.
 
